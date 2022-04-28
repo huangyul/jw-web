@@ -88,4 +88,10 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
 
 ## 手写 Promise
 
+1. const promise = new Promise()
+
+2. 定义三种状态
+
+3. 初始化状态 pending
+
 ## generator 和 async
