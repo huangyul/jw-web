@@ -102,4 +102,11 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
    5.1 入参是一个参数，接受 resolve 和 reject 两个参数
    5.2 初始化 promise 时，会同步执行这个函数，并且有任何异常报错都通过 reject 抛出去
 
+6. then 方法
+   6.1 then 接收两个参数，onFulfilled 和 onRejected 方法
+   6.2 检测是否为函数，如果不是函数，则让它转为函数
+   6.3 根据 promise 的状态，执行不同的回调函数
+   6.4 因为会有异步的情况，如果调用 then 的时候还是 pending，要将所有的回调以数组的方式存储起来
+   6.5 使用 getter，setter 监听 status 的变化，在发生变化时调用相应的回调数组
+
 ## generator 和 async
