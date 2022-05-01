@@ -109,4 +109,6 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
    6.4 因为会有异步的情况，如果调用 then 的时候还是 pending，要将所有的回调以数组的方式存储起来
    6.5 使用 getter，setter 监听 status 的变化，在发生变化时调用相应的回调数组
 
+7. then 的返回值
+
 ## generator 和 async
