@@ -52,21 +52,67 @@ module.exports = class MyPromise {
             throw reason
           }
 
+    // 6.1 在resolve和reject执行过程中如果有抛出错误，要执行reject
+    const onFulfilledWidthCatch = (resolve, reject, newPromise) => {
+      try {
+        if (typeof onFulfilled == 'function') {
+          const x = onFulfilled()
+        } else {
+          resolve(this.value)
+        }
+      } catch (err) {
+        reject(err)
+      }
+    }
+    const onRejectedWidthCatch = (resolve, reject, newPromise) => {
+      try {
+        if (typeof onRejected == 'function') {
+          const x = t
+        } else {
+          reject(this.reason)
+        }
+      } catch (err) {
+        reject(err)
+      }
+    }
+
     // 5.2 通过promise的状态执行不同的方法
     switch (this.status) {
       case FULFILLED: {
-        onFulfilled(this.value)
-        break
+        // onFulfilled(this.value)
+        // 6.2 then需要返回一个promise
+        const newP = new MyPromise((resolve, reject) => {
+          onFulfilledWidthCatch(resolve, reject, newP)
+        })
+        return newP
       }
       case REJECTED: {
-        onRejected(this.reason)
-        break
+        // onRejected(this.reason)
+        // 6.2 then需要返回一个promise
+        const newP = new MyPromise((resolve, reject) => {
+          onRejectedWidthCatch(resolve, reject, newP)
+        })
+        return newP
       }
       // 5.3 当状态还是pending时，将回调函数存起来
       case PENDING: {
-        this.FULFILLED_CALLBACK_LIST.push(onFulfilled)
-        this.REJECTED_CALLBACK_LIST.push(onRejected)
-        break
+        // 6.2 then需要返回一个promise
+        const newP = new MyPromise((resolve, reject) => {
+          this.FULFILLED_CALLBACK_LIST.push(() => {
+            onFulfilledWidthCatch(resolve, reject)
+          })
+          this.REJECTED_CALLBACK_LIST.push(() =>
+            onRejectedWidthCatch(resolve, reject)
+          )
+        })
+        return newP
+        // this.FULFILLED_CALLBACK_LIST.push(() => {
+        //   onFulfilledWidthCatch(resolve, reject)
+        // })
+        // this.REJECTED_CALLBACK_LIST.push(() =>
+        //   onRejectedWidthCatch(resolve, reject)
+        // )
+        // break
       }
     }
   }
@@ -92,4 +138,7 @@ module.exports = class MyPromise {
       }
     }
   }
+
+  // 7.5
+  resolvePromsie(newPromise, x, resolve, reject) {}
 }

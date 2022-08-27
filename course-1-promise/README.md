@@ -113,7 +113,9 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
 7. then 的返回值
    7.1 then 返回promise
    7.2 在执行函数的过程中，发生错误，会直接reject
-   7.3 如果FULFILLED成功执行，则需要resolve
-   7.4 如果REJECTED成功执行，也需要resolve
+   7.3 如果onFulfilled不是函数，且promise1成功执行，promise2必须返回同样的状态和value
+   7.4 如果onRejected不是函数，且promise2拒绝执行，promise2必须返回同样的状态和reason
+   7.5 如果onFulfilled或者onRejected返回一个值x，运行resolvePromise方法
+   
 
 ## generator 和 async

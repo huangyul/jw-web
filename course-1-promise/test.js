@@ -3,11 +3,15 @@
 const MyPromise = require('./MyPromise')
 
 const p = new MyPromise((resolve, reject) => {
-  setTimeout(() => {
-    resolve('resolve')
-  }, 100)
+  resolve(123)
 })
 
-p.then((value) => {
-  console.log(value)
+const p2 = p.then((value) => {
+  throw value
 })
+
+console.log(p2)
+p2.then(
+  (value) => console.log(value),
+  (reason) => console.log(reason)
+)
