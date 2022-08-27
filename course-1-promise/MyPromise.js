@@ -1,53 +1,58 @@
-// 三种状态（常量使用大写
+/* 手写promise */
+
+// 1. 定义三种状态
 const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
 
-class MyPromise {
-  // 6.3 存储回调函数
+// 2. promise的定义
+module.exports = class MyPromise {
+  // 5.3.1 用两组数组来存储如果是还在pending时的方法， 等状态改变了再去执行
   FULFILLED_CALLBACK_LIST = []
   REJECTED_CALLBACK_LIST = []
-  // 6.4 私有的status
   _status = PENDING
-
+  // 2.1 定义初始状态
   constructor(fn) {
-    // 设置初始状态
     this.status = PENDING
     this.value = null
     this.reason = null
-
-    // 传入的函数需要立即调用，并且函数执行时的错误需要使用reject抛出
+    // 4 new的时候会同步执行里面的函数，在执行过程中如果遇到错误立马reject
     try {
-      // 函数会去除resolve和reject，注意函数的this
       fn(this.resolve.bind(this), this.reject.bind(this))
-    } catch (error) {
-      this.reject(error)
+    } catch (err) {
+      this.reject(err)
     }
   }
 
+  // 3.1 resolve
   resolve(value) {
-    // 一定要是pending才能修改
     if (this.status == PENDING) {
-      this.status = FULFILLED
       this.value = value
+      this.status = FULFILLED
     }
   }
 
+  // 3.2 reject
   reject(reason) {
-    // 也一定要pending才能修改
     if (this.status == PENDING) {
-      this.status = REJECTED
       this.reason = reason
+      this.status = REJECTED
     }
   }
 
-  // 6 实现then方法 6.1 接受两个参数，都要是方法
+  // 5 then
   then(onFulfilled, onRejected) {
-    // 6.2 检查是否为函数，如果不是则转为函数
-    onFulfilled = this.isFunction(onFulfilled) ? onFulfilled : (value) => value
-    onRejected = this.isFunction(onRejected) ? onRejected : (reason) => reason
+    // 5.1 判断这两个是不是函数，如果不是，则直接返回
+    onFulfilled =
+      typeof onFulfilled == 'function' ? onFulfilled : (value) => value
+    onRejected =
+      typeof onRejected == 'function'
+        ? onRejected
+        : (reason) => {
+            throw reason
+          }
 
-    // 6.3 判断不同的状态调用不同的函数
+    // 5.2 通过promise的状态执行不同的方法
     switch (this.status) {
       case FULFILLED: {
         onFulfilled(this.value)
@@ -57,7 +62,7 @@ class MyPromise {
         onRejected(this.reason)
         break
       }
-      // 6.4 如果还是pending时，则需要将回调存起来
+      // 5.3 当状态还是pending时，将回调函数存起来
       case PENDING: {
         this.FULFILLED_CALLBACK_LIST.push(onFulfilled)
         this.REJECTED_CALLBACK_LIST.push(onRejected)
@@ -66,31 +71,25 @@ class MyPromise {
     }
   }
 
-  // 6.5 监听status的改变，做出相应的操作
+  // 5.4 当状态发生改变时，再去执行
   get status() {
     return this._status
   }
-
   set status(value) {
     this._status = value
     switch (value) {
-      case 'fulfilled': {
-        // 一个个执行回调
-        this.FULFILLED_CALLBACK_LIST.forEach((callback) => {
-          callback(this.value)
+      case FULFILLED: {
+        this.FULFILLED_CALLBACK_LIST.forEach((cb) => {
+          cb(this.value)
         })
         break
       }
-      case 'rejected': {
-        this.REJECTED_CALLBACK_LIST.forEach((callback) => {
-          callback(this.reason)
+      case REJECTED: {
+        this.REJECTED_CALLBACK_LIST.forEach((cb) => {
+          cb(this.reason)
         })
+        break
       }
     }
-  }
-
-  // 判断是否为函数的方法
-  isFunction(param) {
-    return typeof param === 'function'
   }
 }

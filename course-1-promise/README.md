@@ -4,8 +4,8 @@
 
 ### 术语
 
-1. promise 有 then 方法的对象或函数
-2. thenable 是一个有 then 方法的对象或者函数
+1. `promise` 有 `then` 方法的对象或函数
+2. `thenable` 是一个有 `then` 方法的对象或者函数
 3. value promise 成功状态的值，resolve(value)，可以是任何值，包括 promise
 4. reason promise 失败状态的值，reject(reason)
 5. exception 使用 throw 抛出的异常
@@ -39,12 +39,12 @@ promise.then(onFulfilled, onRejected)
 ```
 
 1. 参数规范  
-   1.1 onFulfilled 必须是函数类型，如果传入的不是函数，则忽略  
-   1.2 onRejected 必须是函数类型，如果传入的不是函数，则忽略  
+   1.1 onFulfilled 必须是函数类型，如果传入的不是函数，应该被忽略  
+   1.2 onRejected 必须是函数类型，如果传入的不是函数，应该被忽略  
 
 2. onFulfilled 特性  
-   2.1 在 promise 变成 fulfilled 时，调用 onFulfilled，参数是 value（onFulfilled 的调用时机）  
-   2.2 在 promise 变成 fulfilled 前，不应该被调用  
+   2.1 在 promise 变成 fulfilled 时，调用 onFulfilled，参数是 value（onFulfilled 的执行时机）  
+   2.2 在 promise 变成 fulfilled 前，不应该被调用 onFulfilled
    2.3 只能被调用一次  
 
 3. onRejected 特性  
@@ -74,12 +74,13 @@ const promise2 = promise1.then(onFulfilled, onRejected)
 7. resolvePromise
 
 ```js
+// promise2:当前promose的返回值
 resolvePromise(promise2, x, resolve, reject)
 ```
 
 7.1 如果 promise2 和 x 相等，reject typeError    
 7.2 如果 x 是一个 promise   
-如果 x pending，promise 必须要在 pending 状态，知道 x 的状态变更  
+如果 x pending，promise 必须要在 pending 状态，直到 x 的状态变更  
 如果 x fulfilled， value -> fulfilled  
 如果 x rejected，reason -> rejected  
 7.3 如果 x 是一个 Object 或 Function  
@@ -110,5 +111,9 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
    6.5 使用 getter，setter 监听 status 的变化，在发生变化时调用相应的回调数组  
 
 7. then 的返回值
+   7.1 then 返回promise
+   7.2 在执行函数的过程中，发生错误，会直接reject
+   7.3 如果FULFILLED成功执行，则需要resolve
+   7.4 如果REJECTED成功执行，也需要resolve
 
 ## generator 和 async
