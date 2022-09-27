@@ -48,7 +48,7 @@ module.exports = class MyPromise {
     onRejected =
       typeof onRejected == 'function'
         ? onRejected
-        : (reason) => {
+        : (reason) =>  {
             throw reason
           }
 

@@ -111,11 +111,20 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
    6.5 使用 getter，setter 监听 status 的变化，在发生变化时调用相应的回调数组  
 
 7. then 的返回值
-   7.1 then 返回promise
-   7.2 在执行函数的过程中，发生错误，会直接reject
-   7.3 如果onFulfilled不是函数，且promise1成功执行，promise2必须返回同样的状态和value
-   7.4 如果onRejected不是函数，且promise2拒绝执行，promise2必须返回同样的状态和reason
+   7.1 如果onFulfilled或者onRjected抛出异常e，那么新的promise必须reject e。
+   7.2 返回值应该是一个promise
+   7.3 如果onFulfilled不是函数，且promise1成功执行，那么promsie2必须返回同样的状态和value
+   7.4 如果onRjected不是函数，且promise1拒绝执行，promise2必须返回同样的状态和reason
    7.5 如果onFulfilled或者onRejected返回一个值x，运行resolvePromise方法
-   
+
+8. resolvePromise
+   8.1 如果x和promise2相同，会互相调用，陷入死循环，所以要reject typeError
+   8.2 如果x是一个promise
+      8.2.1 如果x pending，promise必须要在pending状态，直到x的状态变更
+      8.2.2 如果x fulfilled， value -> fulfilled
+      8.2.3 如果x rejected ，reason -> rejected
+    8.3 如果x 是一个Object/Function
+
+9. onFulfilled和OnRejected应该在微任务里执行
 
 ## generator 和 async
