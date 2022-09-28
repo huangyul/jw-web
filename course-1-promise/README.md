@@ -127,4 +127,23 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
 
 9. onFulfilled和OnRejected应该在微任务里执行   
 
-## generator 和 async
+### 课外拓展问题
+
+###### 为什么 promsie resolve 了一个value， 最后输出的 value 却是 undefined
+
+```js
+const p = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve(111)
+  }, 1000);
+}).then(value => {
+  cosnle.log('then')
+  // 此处没有返回一个值，就会默认返回undefined
+})
+
+setTimeout(() => {
+  console.log(p) // undefined ?
+}, 3000)
+```
+
+答：最后一个 then 里面没有显示的 return ， 相当于 return undefined
