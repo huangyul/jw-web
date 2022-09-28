@@ -147,3 +147,40 @@ setTimeout(() => {
 ```
 
 答：最后一个 then 里面没有显示的 return ， 相当于 return undefined
+
+###### .then 返回是一个新的 promsie，那么为什么 Promise 实现的时候，要用数组来存 onFulfiled 的回调
+
+答：在链式调用确实没问题，数组主要解决是同一个promise实例多次调用then
+
+```js
+const test = new Promise(resolve => {
+  console.log(123)
+})
+
+test.then(() => {})
+test.then(() => {})
+test.then(() => {})
+test.then(() => {})
+test.then(() => {})
+```
+
+###### 为什么在 catch 的回调里，打印 promise ，显示状态是 pending
+
+```js
+const test = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject(123)
+  }, 1000);
+}).catch(reason => {
+  consle.log(reason)
+  consle.log(test) // Promise <pending>
+})
+
+setTimeout(() => {
+  console.log(test) // Promise <undefined>
+}, 10000)
+```
+
+答：
+1. catch 返回一个新的 promise， 而 test 是这个新的promise，就是整个代码的返回
+2. catch 的回调里去打印，还没执行完，所以状态还是 pending，只有当回调执行完成了，无论是成功还是失败，才会改变状态
