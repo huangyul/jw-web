@@ -15,6 +15,112 @@
 3. 高内聚、低耦合
 4. 方便多人协同，面向过程开发
 
+### 演变历史
+
+##### 一、使用对象去存储变量
+
+```js
+const p = {
+  a: 1,
+}
+
+p.a // 1
+```
+
+**问题点：**外界可以直接获取甚至修改其中的变量
+
+##### 二、IIFE（使用立即执行函数）
+
+```JS
+const m = (function ( ) {
+  const a = 1
+  const func = () => {
+    console.log(a)
+  }
+  return {
+    func
+  }
+})()
+
+m.func() // 1
+```
+
+问题点：
+
+1. 至少有一个变量污染全局
+2. 加载顺序无法保证
+
+##### CommonJs
+
+2009 年提出的一个模块标准，主要用于`node.js`，服务器端；要使用在浏览器端，需要使用`babel`转换为`es5`
+
+```js
+// a.js
+module.exports = {
+  a: 1,
+}
+
+// b.js
+const { a } = require('a.js')
+
+a // 1
+```
+
+##### AMD
+
+因为 `CommonJS` 设计初衷是应用在服务端的，所以模块的加载执行也都是同步的（因为本地文件的 `IO` 很快）。但是同步的方式运用到浏览器就不友好了，因为在浏览器中模块文件都是通过网络加载的，单线程阻塞在模块加载上，这是不可接受的。所以在 2011 年有人提出了 `AMD，对` `CommonJS` 兼容的同时支持异步加载
+
+```js
+// define(id, deps, factory)
+define('xxxModule', ['module1', 'module2'], function(module1, module2) {
+  ...
+})
+```
+
+##### UMD
+
+通过对环境的判断，对三种模式同时兼容
+
+```js
+// UMD
+;(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD
+    define(['jquery', 'underscore'], factory)
+  } else if (typeof exports === 'object') {
+    // Node, CommonJS-like
+    module.exports = factory(require('jquery'), require('underscore'))
+  } else {
+    // Browser globals (root is window)
+    root.returnExports = factory(root.jQuery, root._)
+  }
+})(this, function ($, _) {
+  //    methods
+  function a() {} //    private because it's not returned (see below)
+  function b() {} //    public because it's returned
+  function c() {} //    public because it's returned
+  //    exposed public methods
+  return {
+    b: b,
+    c: c,
+  }
+})
+```
+
+##### ESM (ES Module)
+
+ES6提出的一套模块标准，使用 `import` 声明依赖，使用 `export` 声明接口
+
+```js
+// a.js
+export default const a = 1
+
+// b.js
+import a from 'a.js'
+
+a // 1
+```
+
 ## AMD
 
 > AMD 的代表肯定是大名鼎鼎的 RequireJS
