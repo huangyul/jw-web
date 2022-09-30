@@ -98,105 +98,14 @@ class MyPromise {
     }
     if (x instanceof MyPromise) {
       x.then(resolve, reject)
-    } else if (typeof x === 'object' || this.isFunction(x)) {
-      if (x === null) {
-        return resolve(x)
-      }
-
-      let then = null
-
-      try {
-        then = x.then
-      } catch (err) {
-        return reject(err)
-      }
-
-      if (this.isFunction(then)) {
-        let called = false
-
-        try {
-          then.call(
-            x,
-            (y) => {
-              if (called) return
-              this.resolvePromise(newPromise, y, resolve, reject)
-            },
-            (r) => {
-              if (called) return
-              reject(r)
-            }
-          )
-        } catch (err) {
-          if (called) return
-          reject(err)
-        }
-      } else {
-        resolve(x)
-      }
     } else {
       resolve(x)
     }
   }
 
+
+
   isFunction(params) {
     return typeof params === 'function'
   }
-
-  static resolve(value) {
-    if (value instanceof MyPromise) {
-      return value
-    }
-    return new MyPromise((resolve) => {
-      resolve(value)
-    })
-  }
-
-  static reject(reason) {
-    return new MyPromise((resolve, reject) => {
-      reject(reason)
-    })
-  }
-
-  catch(onRejected) {
-    this.then(null, onRejected)
-  }
 }
-
-const p = new MyPromise((resolve, reject) => {
-  setTimeout(() => {
-    reject(123)
-  }, 100)
-})
-
-// MyPromise.resolve(133).then((value) => {
-//   console.log(value)
-// })
-
-// MyPromise.reject('fail').catch((reason) => {
-//   console.log(reason)
-// })
-
-// p.then(
-//   (value) => {
-//     console.log('p1 success')
-//     console.log(value)
-//     return p2
-//   },
-//   (reason) => {
-//     console.log('p1 fail')
-//     console.log(reason)
-//   }
-// ).catch((err) => {
-//   console.log(err)
-// })
-
-// p2.then(
-//   (value) => {
-//     console.log('p2 success')
-//     console.log(value)
-//   },
-//   (reason) => {
-//     console.log('p2 fail')
-//     console.log(reason)
-//   }
-// )
