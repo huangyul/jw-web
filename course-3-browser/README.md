@@ -11,8 +11,9 @@ BOM: Browser Object Model(浏览器对象模型)，浏览器模型提供了独�
 
 1. window 对象--BOM 的核心，是 js 访问浏览器的接口，也是 ES 规定的 Global 对象（兜底对象）
 2. location 对象：提供当前窗口中的加载的文档有关的信息和一些导航功能，即使 window 是对象属性，也是 docuent 对象属性
-   2.1 location.href：返回，可以返回上一个页面  
-   2.1 location.replace：无法返回上一个页面
+   2.1 location.href：返回，可以返回上一个页面（是 location 的一个树型）  
+   2.1 location.replace：无法返回上一个页面（是 location 的一个方法）  
+   2.3 location.reload：重新载入页面
 3. navigator 对象：用来获取浏览器的系统信息
    3.1 window.navigator.onLine：判断网络是否正常
 4. screen 对象：用来表示浏览器窗口外部的显示器的信息
