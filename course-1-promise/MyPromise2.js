@@ -1,24 +1,18 @@
-/**
- * 根据掘金教程手写promise
- * https://juejin.cn/post/6945319439772434469
- */
-
 const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
 
-class MyPromsie2 {
-  FULFILLED_CALLBACK_LIST = []
-  REJECTED_CALLBACK_LIST = []
-  _status = PENDING
+class MyPromise {
+  fulfilledFnList = []
+  rejectedFnList = []
   constructor(fn) {
     this.status = PENDING
     this.value = null
     this.reason = null
     try {
       fn(this.resolve.bind(this), this.reject.bind(this))
-    } catch (e) {
-      this.reject(this.reason)
+    } catch (err) {
+      this.reject(err)
     }
   }
 
@@ -26,78 +20,104 @@ class MyPromsie2 {
     if (this.status == PENDING) {
       this.value = value
       this.status = FULFILLED
+
+      this.fulfilledFnList.forEach((cb) => {
+        cb(this.value)
+      })
     }
   }
+
   reject(reason) {
     if (this.status == PENDING) {
       this.reason = reason
       this.status = REJECTED
+
+      this.rejectedFnList.forEach((cb) => {
+        cb(this.reason)
+      })
     }
   }
 
   then(onFulfilled, onRejected) {
-    const promise2 = new MyPromsie2((resolve, reject) => {
-      onFulfilled = this.isFunction(onFulfilled)
-        ? onFulfilled
-        : (value) => value
-      onRejected = this.isFunction(onRejected)
-        ? onRejected
-        : (reason) => {
-            throw reason
-          }
-
-      switch (this.status) {
-        case FULFILLED: {
+    const fulfilledCatch = (resolve, reject) => {
+      try {
+        if (!this.isFunction(onFulfilled)) {
+          resolve(this.value)
+        } else {
           const x = onFulfilled(this.value)
           this.resolvePromise(x, resolve, reject)
-          break
         }
-        case REJECTED: {
-          onRejected(this.reason)
-          break
-        }
-        case PENDING: {
-          this.FULFILLED_CALLBACK_LIST.push(onFulfilled)
-          this.REJECTED_CALLBACK_LIST.push(onRejected)
-          break
-        }
+      } catch (err) {
+        reject(err)
       }
-    })
-    return promise2
+    }
+    const rejectedCatch = (resolve, reject) => {
+      try {
+        onRejected(this.reason)
+      } catch (err) {
+        reject(err)
+      }
+    }
+    switch (this.status) {
+      case FULFILLED: {
+        return new MyPromise((resolve, reject) => {
+          fulfilledCatch(resolve, reject)
+        })
+      }
+      case REJECTED: {
+        return new MyPromise((resovle, reject) => {
+          rejectedCatch(resolve, reject)
+        })
+      }
+      case PENDING: {
+        return new MyPromise((resolve, reject) => {
+          this.fulfilledFnList.push(() => {
+            fulfilledCatch(resolve, reject)
+          })
+          this.rejectedFnList.push(() => {
+            rejectedCatch(resolve, reject)
+          })
+        })
+      }
+    }
   }
 
   resolvePromise(x, resolve, reject) {
-    // 判断是否是MyPromsie2实例对象
-    if (x instanceof MyPromsie2) {
+    if (x instanceof MyPromise) {
       x.then(resolve, reject)
     } else {
       resolve(x)
     }
   }
 
-  get status() {
-    return this._status
-  }
-  set status(value) {
-    this._status = value
-    switch (value) {
-      case FULFILLED: {
-        this.FULFILLED_CALLBACK_LIST.forEach((cb) => {
-          cb(this.value)
-        })
-        break
-      }
-      case REJECTED: {
-        this.REJECTED_CALLBACK_LIST.forEach((cb) => {
-          cb(this.reason)
-        })
-      }
-    }
-  }
-
-  isFunction(param) {
-    return typeof param == 'function'
+  isFunction(params) {
+    return typeof params === 'function'
   }
 }
 
-module.exports = MyPromsie2
+const p = new MyPromise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(123)
+  }, 100)
+})
+
+p.then(
+  (value) => {
+    console.log('p1 success')
+    console.log(value)
+    return 88
+  },
+  (reason) => {
+    console.log('p1 fail')
+    console.log(reason)
+  }
+).then(
+  (value) => {
+    console.log('p2 success')
+    console.log(value)
+  },
+  (reason) => {
+    console.log('p2 fail')
+    console.log(reason)
+  }
+)

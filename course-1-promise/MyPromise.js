@@ -2,7 +2,7 @@ const PENDING = 'pending';
 const FULFILLED = 'fulfilled';
 const REJECTED = 'rejected';
 
-class MyPromise {
+class MPromise {
 
     FULFILLED_CALLBACK_LIST = [];
     REJECTED_CALLBACK_LIST = [];
@@ -227,3 +227,9 @@ class MyPromise {
 
     }
 }
+
+const p = new MPromise((resolve, reject) => {
+  resolve(123)
+})
+
+p.then().then(value => {console.log(value)})
