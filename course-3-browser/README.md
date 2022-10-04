@@ -219,3 +219,115 @@ function preventDefault(ev) {
 ```
 
 ## 浏览器请求
+
+### ajax 及 fetch API 详解
+
+get：获取数据
+post：录入表单
+delete：删除
+put：更新
+
+常见的请求方式：
+
+1. XMLHTTPRequest
+2. fetch（见的不多）
+
+###### XMLHTTPRequest
+
+```js
+const xhr = new XMLHttpRequest()
+
+xhr.open('GET', 'http://xxx/xxx')
+
+xhr.onreadystatechange = function () {
+  // readyState 为4请求才算成功
+  if (xhr.readyState != 4) {
+    return
+  }
+
+  if (xhr.status == 200) {
+    console.log(xhr.responseText)
+  } else {
+    console.error(xhr.status, xhr.statusText)
+  }
+}
+
+xhr.timeout = 3000
+
+// 获取上传进度
+xhr.upload.onprogress = function (p) {
+  console.log(Math.round((p.loaded / p.total) * 100) + '%')
+}
+
+xhr.send()
+```
+
+###### fetch
+
+```js
+fetch('http://xxx/xxx', {
+  method: 'GET',
+})
+  .then((res) => {
+    res.json()
+  })
+  .then((json) => console.log(json))
+  .catch((err) => {
+    console.log(err)
+  })
+```
+
+注意点：
+
+1. 默认不带 cookie
+
+```js
+fetch('http://xxx/xxx', {
+  method: 'GET',
+  credentials: 'same-origin',
+})
+```
+
+2. 错误不会 reject，http 错误，比如 404，不会导致 fetch 返回的 promise 标记为 reject；想要精确的判断，判断 response.ok
+
+```js
+fetch('https://xxx/xxx', {
+  method: 'GET',
+}).then(res => {
+  if(response.ok) {
+    // 请求成功 200
+    ...
+  }else {
+    throw new error('fetch error')
+  }
+})
+.then(json => console.log(json))
+.catch(err => console.log(err))
+```
+
+3. 不支持设置超时
+
+```js
+// 自己封装
+function fetchTimeout(url, config, timeout = 9999) {
+  return new Promise((resolve, reject) => {
+    fetch(url, config).then(resolve).catch(reject)
+    setTimeout(reject, timeout)
+  })
+}
+```
+
+4. 中止 fetch
+
+```js
+const controller = new AbortController()
+
+fetch('https://xxx/xxx', {
+  method: 'GET',
+  signal: controller.signal // 接受一个信号，可以使请求中止
+})
+
+controller.abort() // 中止请求
+```
+
+
