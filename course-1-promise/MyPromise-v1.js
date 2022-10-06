@@ -71,7 +71,7 @@ class MyPromise {
         return newPromise
       }
       case REJECTED: {
-        const newPromise = new MyPromise((resovle, reject) => {
+        const newPromise = new MyPromise((resolve, reject) => {
           rejectedCatch(resolve, reject, newPromise)
         })
         return newPromise
