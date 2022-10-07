@@ -1,5 +1,19 @@
 # Typescript
 
+## 基础
+
+常用泛型工具
+
+1. Partial
+2. Required
+3. Readonly
+4. RetureType
+5. Pick
+6. Record
+7. Exclude
+8. Extract
+9. Omit
+
 ## 使用 ts 的好处
 
 1. ts 是 js 的超集，ts 包含 js 的所有功能，并拓展了静态类型和基于类的面向对象编程，功能比 js 多（类的 protect, private）；
