@@ -3,8 +3,9 @@ const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
 
 class MyPromise {
-  fulfilledFnList = []
-  rejectedFnList = []
+  fulfilledCallbackList = []
+  rejectedCallbackList = []
+
   constructor(fn) {
     this.status = PENDING
     this.value = null
@@ -17,88 +18,109 @@ class MyPromise {
   }
 
   resolve(value) {
-    if (this.status == PENDING) {
+    if (this.status === PENDING) {
       this.value = value
       this.status = FULFILLED
 
-      this.fulfilledFnList.forEach((cb) => {
+      this.fulfilledCallbackList.forEach((cb) => {
         cb(this.value)
       })
     }
   }
 
   reject(reason) {
-    if (this.status == PENDING) {
+    if (this.status === PENDING) {
       this.reason = reason
       this.status = REJECTED
 
-      this.rejectedFnList.forEach((cb) => {
+      this.rejectedCallbackList.forEach((cb) => {
         cb(this.reason)
       })
     }
   }
 
   then(onFulfilled, onRejected) {
-    const fulfilledCatch = (resolve, reject, newPromise) => {
+    onFulfilled =
+      typeof onFulfilled == 'function' ? onFulfilled : (value) => value
+    onRejected =
+      typeof onRejected == 'function'
+        ? onRejected
+        : (reason) => {
+            throw reason
+          }
+
+    const fulfilledWithCatch = (resolve, reject, newPromsie) => {
       try {
-        if (!this.isFunction(onFulfilled)) {
+        if (typeof onFulfilled != 'function') {
           resolve(this.value)
         } else {
           const x = onFulfilled(this.value)
-          this.resolvePromise(newPromise, x, resolve, reject)
+          this.resolvePromsie(x, newPromsie, resolve, reject)
         }
       } catch (err) {
         reject(err)
       }
     }
-    const rejectedCatch = (resolve, reject, newPromise) => {
+
+    const rejectedWithCatch = (resolve, reject, newPromise) => {
       try {
-        if (!this.isFunction(onRejected)) {
+        if (typeof onRejected != 'function') {
           reject(this.reason)
         } else {
           const x = onRejected(this.reason)
-          this.resolvePromise(newPromise, x, resolve, reject)
+          this.resolvePromsie(x, newPromise, resolve, reject)
         }
-      } catch (err) {
-        reject(err)
-      }
+      } catch (err) {}
     }
+
     switch (this.status) {
       case FULFILLED: {
         const newPromise = new MyPromise((resolve, reject) => {
-          fulfilledCatch(resolve, reject, newPromise)
+          queueMicrotask(() => {
+            fulfilledWithCatch(resolve, reject, newPromise)
+          })
         })
         return newPromise
       }
       case REJECTED: {
-        const newPromise = new MyPromise((resovle, reject) => {
-          rejectedCatch(resolve, reject, newPromise)
+        const newPromise = new MyPromise((resolve, reject) => {
+          queueMicrotask(() => {
+            rejectedWithCatch(resolve, reject, newPromise)
+          })
         })
         return newPromise
       }
       case PENDING: {
         const newPromise = new MyPromise((resolve, reject) => {
-          this.fulfilledFnList.push(() => {
-            fulfilledCatch(resolve, reject, newPromise)
-          })
-          this.rejectedFnList.push(() => {
-            rejectedCatch(resolve, reject, newPromise)
+          queueMicrotask(() => {
+            this.fulfilledCallbackList.push(() => {
+              fulfilledWithCatch(resolve, reject, newPromise)
+            })
+            this.rejectedCallbackList.push(() => {
+              rejectedWithCatch(resolve, reject, newPromise)
+            })
           })
         })
-        return newPromise
+        return new newPromise()
       }
     }
   }
 
-  resolvePromise(newPromise, x, resolve, reject) {
-    if (x === newPromise) {
-      return reject(
-        new TypeError('Chaining cycle detected for promise #<Promise>')
-      )
+  resolvePromsie(x, p2, resolve, reject) {
+    if (x === p2) {
+      return reject(new TypeError('xxx'))
     }
+
     if (x instanceof MyPromise) {
-      x.then(resolve, reject)
-    } else if (typeof x === 'object' || this.isFunction(x)) {
+      x.then(
+        (y) => {
+          this.resolvePromsie(y, p2, resolve, reject)
+        },
+        (r) => {
+          reject(r)
+        }
+      )
+    } else if (typeof x === 'object' || typeof x === 'function') {
       if (x === null) {
         return resolve(x)
       }
@@ -111,26 +133,24 @@ class MyPromise {
         return reject(err)
       }
 
-      if (this.isFunction(then)) {
+      if (typeof then === 'function') {
         let called = false
-
-        try {
-          then.call(
-            x,
-            (y) => {
-              if (called) return
-              this.resolvePromise(newPromise, y, resolve, reject)
-            },
-            (r) => {
-              if (called) return
-              reject(r)
-            }
-          )
-        } catch (err) {
-          if (called) return
-          reject(err)
-        }
+        then.apply(
+          x,
+          (y) => {
+            if (called) return
+            called = true
+            this.resolvePromsie(y, p2, resolve, reject)
+          },
+          (r) => {
+            if (called) return
+            called = true
+            reject(r)
+          }
+        )
       } else {
+        if (called) return
+        called = true
         resolve(x)
       }
     } else {
@@ -138,15 +158,16 @@ class MyPromise {
     }
   }
 
-  isFunction(params) {
-    return typeof params === 'function'
+  catch(onRejected) {
+    this.then(null, onRejected)
   }
 
   static resolve(value) {
     if (value instanceof MyPromise) {
       return value
     }
-    return new MyPromise((resolve) => {
+
+    return new MyPromise((resolve, reject) => {
       resolve(value)
     })
   }
@@ -156,47 +177,4 @@ class MyPromise {
       reject(reason)
     })
   }
-
-  catch(onRejected) {
-    this.then(null, onRejected)
-  }
 }
-
-const p = new MyPromise((resolve, reject) => {
-  setTimeout(() => {
-    reject(123)
-  }, 100)
-})
-
-// MyPromise.resolve(133).then((value) => {
-//   console.log(value)
-// })
-
-// MyPromise.reject('fail').catch((reason) => {
-//   console.log(reason)
-// })
-
-// p.then(
-//   (value) => {
-//     console.log('p1 success')
-//     console.log(value)
-//     return p2
-//   },
-//   (reason) => {
-//     console.log('p1 fail')
-//     console.log(reason)
-//   }
-// ).catch((err) => {
-//   console.log(err)
-// })
-
-// p2.then(
-//   (value) => {
-//     console.log('p2 success')
-//     console.log(value)
-//   },
-//   (reason) => {
-//     console.log('p2 fail')
-//     console.log(reason)
-//   }
-// )
