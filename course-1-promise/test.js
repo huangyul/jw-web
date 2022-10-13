@@ -15,3 +15,5 @@ p2.then(
   (value) => console.log(value),
   (reason) => console.log(reason)
 )
+
+// git测试
