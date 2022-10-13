@@ -1,9 +1,21 @@
-const MyPromsie2 = require('./MyPromise2')
+const promise1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('success')
+  }, 1000)
+})
+const promise2 = promise1.then(() => {
+  throw new Error('error!!!')
+})
+console.log('promise1', promise1)
+console.log('promise2', promise2)
+setTimeout(() => {
+  console.log('promise1', promise1)
+  console.log('promise2', promise2)
+}, 2000)
 
-const promise = new MyPromsie2((resolve, reject) => {
-  resolve(100)
-})
-const p1 = promise.then((value) => {
-  console.log(value)
-  return p1
-})
+// promise1 pending
+// promise2 pending
+// success
+// error
+// promsie1 fulfilled
+// promsie2 rejected
