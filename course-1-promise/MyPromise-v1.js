@@ -111,6 +111,8 @@ class MyPromise {
   }
 
   resolvePromsie(x, p2, resolve, reject) {
+    console.log('then:')
+    console.log(x)
     if (x === p2) {
       return reject(new TypeError('xxx'))
     }
@@ -231,19 +233,32 @@ class MyPromise {
   }
 }
 
-const p1 = new MyPromise((resolve) => {
-  setTimeout(() => {
-    resolve(2)
-  }, 2000)
-})
+// const p1 = new MyPromise((resolve) => {
+//   setTimeout(() => {
+//     resolve(2)
+//   }, 2000)
+// })
 
-const p2 = new MyPromise((resolve) => {
-  setTimeout(() => {
-    resolve(1)
-  }, 1)
-})
+// const p2 = new MyPromise((resolve) => {
+//   setTimeout(() => {
+//     resolve(1)
+//   }, 1)
+// })
 
-MyPromise.all([p1, p2]).then((value) => {
-  console.log(123)
-  console.log(value)
-})
+// MyPromise.all([p1, p2]).then((value) => {
+//   console.log(123)
+//   console.log(value)
+// })
+
+// const p = MyPromise.resolve(999)
+//   .then()
+//   .then((value) => {
+//     console.log(value)
+//   })
+
+MyPromise.resolve(123)
+  .then()
+  .then((value) => {
+    console.log('promise')
+    console.log(value)
+  })
