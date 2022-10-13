@@ -188,3 +188,23 @@ setTimeout(() => {
 
 1. catch 返回一个新的 promise， 而 test 是这个新的 promise，就是整个代码的返回
 2. catch 的回调里去打印，还没执行完，所以状态还是 pending，只有当回调执行完成了，无论是成功还是失败，才会改变状态
+
+### 常见题目
+
+1. 题目一
+
+```js
+Promise.resolve().then(() => {
+  console.log('promise1')
+  const timer2 = setTimeout(() => {
+    console.log('timer2')
+  }, 0)
+})
+const timer1 = setTimeout(() => {
+  console.log('timer1')
+  Promise.resolve().then(() => {
+    console.log('promise2')
+  })
+}, 0)
+console.log('start')
+```
