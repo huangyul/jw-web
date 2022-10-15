@@ -39,4 +39,4 @@ type Person3 = Extract2<'name' | 'age', 'age'>
 // Omit
 type Omit2<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>
 
-type Person4 = Omit2<Person, 'name'>
+type Person4 = Omit<Person, 'name'>
