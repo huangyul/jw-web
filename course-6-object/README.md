@@ -156,4 +156,29 @@ const p1 = _new(Person, 'x')
 ```
 
 ### 原型链是什么
-1.14
+
+## 继承
+
+### 原型链继承
+
+#### 实现
+
+```js
+function Person(name) {
+  this.name = name
+}
+
+Person.prototype.say = function () {
+  console.log(this.name)
+}
+
+function Kobe() {}
+
+// 继承
+Kobe.prototype = new Person()
+// constructor矫正
+Kobe.prototype.constructor = Kobe
+```
+如果直接使用原型赋值，则无法访问this上的属性
+
+```js
