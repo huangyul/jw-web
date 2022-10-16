@@ -1,17 +1,16 @@
-function Person(name) {
+function Parent(name, age) {
   this.name = name
+  this.age = age
+  Parent.prototype.say = function () {
+    console.log(this.name)
+  }
 }
 
-function _new() {
-  const obj = new Object()
-
-  let FunctionConstructor = [].shift.call(arguments) // 取出第一个参数，即构造函数
-  obj.__proto__ = FunctionConstructor.prototype
-
-  let resultObj = FunctionConstructor.apply(obj, arguments)
-
-  return typeof resultObj === 'object' ? resultObj : obj
+function Child(id) {
+  Parent.apply(this, Array.from(arguments).slice(1)) // 构造函数继承
+  this.id= id
 }
 
-const p1 = _new(Person, 'xxx')
-console.log(p1)
+// 原型链继承
+Child.prototype = new Parent()
+Child.prototype.construtor = Child

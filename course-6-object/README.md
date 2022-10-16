@@ -179,6 +179,105 @@ Kobe.prototype = new Person()
 // constructor矫正
 Kobe.prototype.constructor = Kobe
 ```
-如果直接使用原型赋值，则无法访问this上的属性
+
+如果直接使用原型赋值，则无法访问 this 上的属性
+
+#### 会出现的问题
+
+1. 如果有属性是引用类型，一旦某个实例修改这个属性，所有的实例都会受到影响
+2. 创建实例的时候无法传参
 
 ```js
+function Parent() {
+  this.name = [1, 2]
+}
+
+function Child() {}
+
+Child.prototype = new Parent()
+
+const c1 = new Child()
+const c2 = new Child()
+
+c1.name.push(4)
+console.log(c1.name) // [1,2,4]
+console.log(c2.name) // [1,2,4]
+```
+
+### 构造函数继承
+
+将父类上的属性和方法，添加/复制到子类上，防止共享
+
+#### 实现
+
+```js
+// 解决属性互相影响
+function Parent() {
+  this.name = [1, 2]
+  this.xxx = 'xxx'
+}
+
+function Child() {
+  Parent.call(this) // 执行一下parent，改变了this的指向，相当于child加上了name和xxx属性
+}
+
+Child.prototype = new Parent()
+
+const c1 = new Child()
+const c2 = new Child()
+
+c1.name.push(4)
+console.log(c1.name) // [1,2,4]
+console.log(c2.name) // [1,2]
+
+// 解决传参的问题
+function Parent(name, age) {
+  this.name = name
+  this.xxx = age
+}
+
+function Child(id, name, age) {
+  Parent.call(this, name, age) // 执行一下parent，改变了this的指向，相当于child加上了name和xxx属性
+  this.id = id
+}
+
+Child.prototype = new Parent()
+
+const c1 = new Child('c1', [1, 2], 22)
+const c2 = new Child('c2', [1, 2], 33)
+
+c1.name.push(4)
+console.log(c1.name) // [1,2,4]
+console.log(c2.name) // [1,2]
+
+console.log(c1.id)
+```
+
+#### 会出现的问题
+
+1. 属性或者方法被继承的话，只能在构造函数中定义。如果方法在构造函数内定义了，每次创建实例都会创建新的方法，浪费内存
+
+### 组合继承
+
+结合原型链继承和构造函数继承
+
+#### 实现
+
+```js
+function Parent(name, age) {
+  this.name = name
+  this.age = age
+  Parent.prototype.say = function () {
+    console.log(this.name)
+  }
+}
+
+function Child(id) {
+  Parent.apply(this, Array.from(arguments).slice(1)) // 构造函数继承
+  this.id = id
+}
+
+// 原型链继承
+Child.prototype = new Parent()
+Child.prototype.construtor = Child
+```
