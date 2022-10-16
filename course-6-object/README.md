@@ -142,7 +142,8 @@ function Person(name) {
 }
 
 function _new() {
-  const obj = new Object()
+  // const obj = Object.create(null)
+  const obj = {}
 
   let FunctionConstructor = [].shift.call(arguments) // 取出第一个参数，即构造函数
   obj.__proto__ = FunctionConstructor.prototype
@@ -341,3 +342,10 @@ class Child extends Parent {
 }
 
 ```
+
+###### 类数组转数组的方法
+
+
+1. [...xxx].slice()
+2. Array.prototype.slice.call(xxx)
+3. Array.from(xxx).slice()
