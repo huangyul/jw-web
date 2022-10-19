@@ -40,3 +40,17 @@ console.log('hello cli')
 >! 第一句的作用是当该文件以脚本文件执行时，使用node进行解析
 
 2. 在package.json
+
+```json
+"bin": {
+  "mycli": "./index.js"  // 在执行的脚本
+}
+```
+
+3. 创建软链接
+
+```bash
+npm link
+```
+
+#### 格式化用户的输入
