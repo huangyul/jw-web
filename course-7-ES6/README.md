@@ -67,3 +67,17 @@ console.log(a)
 
 let a = 1 // error
 ```
+
+###### const 声明后不能改变（引用值可以）
+
+```js
+const arr = []
+
+arr.push(1) // OK
+```
+
+#### 箭头函数
+
+1. this 是在定义的时候决定的，而 function 是在使用的时候决定的
+   
+// TODO 26:00
