@@ -96,7 +96,7 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
 3. 初始化状态 pending
 
 4. resolve 和 reject 方法  
-   4.1 在两个方法都要更改 status，一定是从 pending 才能改变  
+   4.1 在两个方法都要更改 status，一定是从 pending 才能改变    
    4.2 入参分别是 value 和 reason
 
 5. 对于实例化的 promise 时的入参处理  

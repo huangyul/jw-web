@@ -10,50 +10,52 @@ class MyPromise {
     this.value = null
     this.reason = null
     try {
-      fn(this.resolve.bind(this), this.rejece.bind(this))
+      fn(this.resolve.bind(this), this.reject.bind(this))
     } catch (err) {
-      this.rejece(err)
+      this.reject(err)
     }
   }
 
   resolve(value) {
-    if (this.status == PENDING) {
+    if (this.status === PENDING) {
       this.value = value
       this.status = FULFILLED
 
-      this.FULFILLED_CALLBACK_LIST.forEach((cb) => {
-        cb(this.value)
+      this.FULFILLED_CALLBACK_LIST.forEach((fn) => {
+        fn(this.value)
       })
     }
   }
 
-  rejece(reason) {
-    if (this.status == PENDING) {
+  reject(reason) {
+    if (this.status === PENDING) {
       this.reason = reason
       this.status = REJECTED
 
-      this.REJECTED_CALLBACK_LIST.forEach((cb) => {
-        cb(this.reason)
+      this.REJECTED_CALLBACK_LIST.forEach((fn) => {
+        fn(this.reason)
       })
     }
   }
 
   then(onFulfilled, onRejected) {
-    onFulfilled = this.isFunction(onFulfilled) ? onFulfilled : (value) => value
-    onRejected = this.isFunction(onRejected)
-      ? onRejected
-      : (reason) => {
-          throw reason
-        }
+    onFulfilled =
+      typeof onFulfilled === 'function' ? onFulfilled : (value) => value
+    onRejected =
+      typeof onRejected === 'function'
+        ? onRejected
+        : (reason) => {
+            throw reason
+          }
 
     const fulfilledWithCatch = (resolve, reject, newPromise) => {
       queueMicrotask(() => {
         try {
-          if (!this.isFunction(onFulfilled)) {
+          if (typeof onFulfilled !== 'function') {
             resolve(this.value)
           } else {
             const x = onFulfilled(this.value)
-            this.resolvePromise(newPromise, x, resolve, reject)
+            this.resolvePromsie(x, newPromise, resolve, reject)
           }
         } catch (err) {
           reject(err)
@@ -64,11 +66,11 @@ class MyPromise {
     const rejectedWithCatch = (resolve, reject, newPromise) => {
       queueMicrotask(() => {
         try {
-          if (!this.isFunction(onRejected)) {
+          if (typeof onRejected !== 'function') {
             reject(this.reason)
           } else {
             const x = onRejected(this.reason)
-            this.resolvePromise(newPromise, x, resolve, reject)
+            this.resolvePromsie(x, newPromise, resolve, reject)
           }
         } catch (err) {
           reject(err)
@@ -109,71 +111,58 @@ class MyPromise {
     }
   }
 
-  isFunction(params) {
-    return typeof params == 'function'
-  }
-
-  resolvePromise(newPromise, x, resolve, reject) {
+  resolvePromsie(x, newPromise, resolve, reject) {
     if (x === newPromise) {
-      return reject(new TypeError('this return value is same as newPromsie'))
+      return reject(new TypeError('xxx'))
     }
 
     if (x instanceof MyPromise) {
-      x.then((y) => {
-        this.resolvePromsie(newPromise, y, resolve, reject)
-      }, reject)
-    } else if (typeof x === 'object' || this.isFunction(x)) {
+      x.then(resolve, reject)
+    } else if (['object', 'function'].includes(typeof x)) {
       if (x === null) {
-        return resolve(x)
+        return resolve()
       }
 
       let then
-
       try {
         then = x.then
       } catch (err) {
         return reject(err)
       }
-      if (this.isFunction(then)) {
+
+      if (typeof then === 'function') {
         let called = false
-        try {
-          then.call(
-            x,
-            (y) => {
-              if (called) return
-              called = true
-              this.resolvePromsie(newPromise, y, resolve, reject)
-            },
-            (r) => {
-              if (called) return
-              called = true
-              reject(r)
-            }
-          )
-        } catch (err) {
-          if (called) return
-          return reject
-        }
+
+        then.call(
+          x,
+          (y) => {
+            if (called) return
+            called = true
+            this.resolvePromsie(y, newPromise, resolve, reject)
+          },
+          (r) => {
+            if (called) return
+            called = true
+            reject(r)
+          }
+        )
       } else {
-        resolve(x)
+        return resolve(x)
       }
     } else {
-      resolve(x)
+      return resolve(x)
     }
   }
 
   catch(onRejected) {
-    return this.then(null, onRejected)
+    this.then(null, onRejected)
   }
 
   static resolve(value) {
     if (value instanceof MyPromise) {
       return value
     }
-
-    return new MyPromise((resolve) => {
-      resolve(value)
-    })
+    return new MyPromise((resolve) => resolve(value))
   }
 
   static reject(reason) {
@@ -182,17 +171,22 @@ class MyPromise {
     })
   }
 
-  static race(promiseList) {
+  static all(list) {
     return new MyPromise((resolve, reject) => {
-      const len = promiseList.length
+      let count = 0
+      let resArr = []
+      let len = list.length
+
       if (len === 0) {
-        return resolve()
+        return resolve([])
       }
 
-      promiseList.forEach((p) => {
-        MyPromise.resolve(p).then(
+      list.forEach((i, index) => {
+        MyPromise.resolve(i).then(
           (value) => {
-            return resolve(value)
+            count += 1
+            resArr[index] = value
+            if (count === len) return resolve(resArr)
           },
           (reason) => {
             return reject(reason)
@@ -202,20 +196,14 @@ class MyPromise {
     })
   }
 
-  static all(promiseList) {
-    let count = 0,
-      resArr = []
+  static race(list) {
     return new MyPromise((resolve, reject) => {
-      const len = promiseList.length
-
-      promiseList.forEach((p) => {
-        MyPromise.resolve(p).then(
+      list.forEach((i) => {
+        MyPromise.resolve(i).then(
           (value) => {
-            resArr.push(value)
-            count++
-            if (count === len) return resolve(resArr)
+            return resolve(value)
           },
-          (reason) => {
+          (r) => {
             return reject(reason)
           }
         )
@@ -226,16 +214,20 @@ class MyPromise {
 
 const p1 = new MyPromise((resolve, reject) => {
   setTimeout(() => {
-    resolve(111)
+    resolve(1)
   }, 1000)
 })
 
 const p2 = new MyPromise((resolve, reject) => {
   setTimeout(() => {
-    resolve(222)
-  }, 2000)
+    reject(3)
+  }, 3000)
 })
 
-MyPromise.all([p1, p2]).then((value) => {
-  console.log(value)
-})
+MyPromise.race([p1, p2])
+  .then((value) => {
+    console.log(value)
+  })
+  .catch((reason) => {
+    console.log(reason)
+  })
