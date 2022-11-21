@@ -79,5 +79,15 @@ arr.push(1) // OK
 #### 箭头函数
 
 1. this 是在定义的时候决定的，而 function 是在使用的时候决定的
-   
-// TODO 26:00
+2. 简写，只有一句的时候，并没有显示的 return，会返回执行的结果
+
+```js
+const arrFn = (value) => Number(value)
+
+// return obj
+const arrFn2 = (value) => ({})
+```
+
+3. 不能被用作构造函数
+构造函数：会改变this指向，指到新实例
+箭头函数：this在定义的时候定义的
