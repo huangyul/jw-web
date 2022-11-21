@@ -135,7 +135,7 @@ const day = '01'
 const template = '${year}-${month}-${day}'
 const context = { year, month, day }
 
-const str = render(template)(context) 
+const str = render(template)(context)
 
 console.log(str) // 20220-10-01
 
@@ -146,5 +146,95 @@ function render(template) {
     // 表示匹配${}内的任何东西
     return template.replace(/\$\{(.*?)\}/g, (match, key) => context[key])
   }
+}
+```
+
+#### 解构
+
+1. 数组的解构
+
+```js
+const arr = [1, 2, 3]
+
+const [a, b, c] = arr
+console.log(a, b, c)
+```
+
+2. 对象的解构
+
+```js
+const obj = { a: 1, b: 2 }
+// 同key
+const { a, b } = obj
+// 不同key
+const { a: c, b: d } = obj
+```
+
+3. 解构的原理
+
+针对可迭代对象 Iterator，通过遍历顺序获取对应的值进行赋值
+
+Iterator 是什么？
+
+是一个接口（interface），为不一样的数据解构提供统一的访问机制
+
+任何数据只要有 Iterator（for of）
+
+实现 Iterator
+
+```js
+function generateIterator(array) {
+  let nextIndex = 0
+  return {
+    next: () =>
+      nextIndex < array.length
+        ? {
+            value: array[nextIndex++],
+            done: false,
+          }
+        : {
+            value: undefined,
+            done: true,
+          },
+  }
+}
+
+const iterator = generateIterator([2, 3, 4])
+console.log(iterator.next())
+console.log(iterator.next())
+console.log(iterator.next())
+console.log(iterator.next())
+```
+
+什么是可迭代对象
+
+可迭代对象存在两种协议，可迭代协议，迭代器协议
+
+可迭代协议：对象内部实现了 Symbol.iteratore: () => {}
+迭代器协议：必须有 next 方法，next 方法返回对象的{done,value}
+
+实现可迭代的对象
+
+```js
+const obj = {
+  count: 0,
+  [Symbol.iterator]: () => {
+    return {
+      next: () => {
+        obj.count++
+        if (obj.count <= 0) {
+          return {
+            value: obj.count,
+            done: false,
+          }
+        } else {
+          return {
+            value: undefined,
+            done: true,
+          }
+        }
+      },
+    }
+  },
 }
 ```
