@@ -91,3 +91,27 @@ const arrFn2 = (value) => ({})
 3. 不能被用作构造函数
 构造函数：会改变this指向，指到新实例
 箭头函数：this在定义的时候定义的
+
+#### class
+
+```js
+class Test {
+  _name = ''
+  constructor(name) {
+    this.name = name
+  }
+
+  static getMyName() {
+    return `${this._name}xxxx`
+  }
+
+  get name() {
+    return this._name
+  }
+
+  set name(value) {
+    console.log('检测到赋值')
+    this._name = value
+  }
+}
+```

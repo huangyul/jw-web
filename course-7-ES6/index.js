@@ -1,17 +1,22 @@
-const person = {
-  name: 'xxx',
-  getName: function () {
-    return this.name
-  },
-  say: () => {
-    return this.name
-  },
-}
-const person2 = {
-  name: 'yyy',
-}
-console.log(person.getName()) // xxx
-console.log(person.getName.apply(person2)) // yyy
+class Test {
+  _name = ''
+  constructor(name) {
+    this.name = name
+  }
 
-console.log(person.say()) // undefined window.name
-console.log(person.say.apply(person2))
+  // 静态属性
+  static getMyName() {
+    return `${this.name}xxxx`
+  }
+  get name() {
+    return this._name
+  }
+
+  set name(value) {
+    console.log('检测到赋值')
+    this._name = value
+  }
+}
+
+const t = new Test('xxx')
+console.log(Test.getMyName())
