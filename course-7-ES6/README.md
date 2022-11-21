@@ -89,8 +89,8 @@ const arrFn2 = (value) => ({})
 ```
 
 3. 不能被用作构造函数
-构造函数：会改变this指向，指到新实例
-箭头函数：this在定义的时候定义的
+   构造函数：会改变 this 指向，指到新实例
+   箭头函数：this 在定义的时候定义的
 
 #### class
 
@@ -112,6 +112,39 @@ class Test {
   set name(value) {
     console.log('检测到赋值')
     this._name = value
+  }
+}
+```
+
+#### 模板字符串
+
+```js
+console.log(a + 'xxx')
+console.log(`${a}xxx`)
+```
+
+模板字符串会默认换行
+
+###### 编写函数，实现模板字符串的功能
+
+```js
+const year = '2022'
+const month = '10'
+const day = '01'
+
+const template = '${year}-${month}-${day}'
+const context = { year, month, day }
+
+const str = render(template)(context) 
+
+console.log(str) // 20220-10-01
+
+// 解答
+function render(template) {
+  return function (context) {
+    // 使用正则匹配
+    // 表示匹配${}内的任何东西
+    return template.replace(/\$\{(.*?)\}/g, (match, key) => context[key])
   }
 }
 ```

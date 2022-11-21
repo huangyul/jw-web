@@ -1,22 +1,18 @@
-class Test {
-  _name = ''
-  constructor(name) {
-    this.name = name
-  }
+const year = '2022'
+const month = '10'
+const day = '01'
 
-  // 静态属性
-  static getMyName() {
-    return `${this.name}xxxx`
-  }
-  get name() {
-    return this._name
-  }
+const template = '${year}-${month}-${day}'
+const context = { year, month, day }
 
-  set name(value) {
-    console.log('检测到赋值')
-    this._name = value
+const str = render(template)(context) // 两个小括号的函数是高阶函数
+
+console.log(str) // 20220-10-01
+
+function render(template) {
+  return function (context) {
+    // 使用正则匹配
+    // 表示匹配${}内的任何东西
+    return template.replace(/\$\{(.*?)\}/g, (match, key) => context[key])
   }
 }
-
-const t = new Test('xxx')
-console.log(Test.getMyName())
