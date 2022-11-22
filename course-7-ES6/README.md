@@ -238,3 +238,32 @@ const obj = {
   },
 }
 ```
+
+两种不同的遍历：for in 和 for of
+
+**for in**
+
+1. `for in` 不仅会遍历当前对象的属性，还会遍历原型链上的属性
+2. `for in` 不会被 `break` 中断
+3. 不适合遍历数组
+
+针对第一点，所以一般使用 for in 时，要判断一下是否是本身的属性
+
+```js
+Object.prototype.aa = '33'
+let obj = {
+  name: 'xxx',
+  age: 123,
+}
+
+for (let key in obj) {
+  // console.log(key) // name age aa
+  if (obj.hasOwnProperty(key)) {
+    console.log(key) // name age
+  }
+}
+```
+
+**for of**
+
+1. 可被 `break` 中断
