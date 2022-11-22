@@ -244,8 +244,7 @@ const obj = {
 **for in**
 
 1. `for in` 不仅会遍历当前对象的属性，还会遍历原型链上的属性
-2. `for in` 不会被 `break` 中断
-3. 不适合遍历数组
+2. 不适合遍历数组
 
 针对第一点，所以一般使用 for in 时，要判断一下是否是本身的属性
 
@@ -267,3 +266,47 @@ for (let key in obj) {
 **for of**
 
 1. 可被 `break` 中断
+
+#### Object
+
+1. `Object.keys()` 输出由 `keys` 组成的数组
+   实现：
+
+```js
+function getObjectKeys(obj) {
+  const result = []
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      result.push(key)
+    }
+  }
+  return result
+}
+```
+
+2. `Object.values` 输出 `value` 组成的数组
+
+3. `Object.entries` 输出`[[key,value],[key1, value1]]`
+   实现：
+
+```js
+function getObjectEntries(obj) {
+  const result = []
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      result.push([key, obj[key]])
+    }
+  }
+  return result
+}
+```
+
+4. `Object.getOwnPropertyNames()` 输出由 `key` 组成的数组
+
+5. `Object.getOwnPropertyDescriptor()` 获取属性的描述符
+
+6. `Object.assign` 浅拷贝
+
+#### Promise
+
+ 
