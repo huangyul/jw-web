@@ -377,3 +377,20 @@ function flatDeep(arr, d = 1) {
 - [...arguments]
 - Array.from(arguments)
 - Array.prototype.slice.call()
+
+## babel
+
+https://astexplorer.net
+
+### 过程
+
+1. 解析：接受代码输出 AST(抽象语法树)
+
+- 词法解析
+- 语法解析
+
+2. 转换
+   接收 `AST` 并对其进行遍历，可以对节点进行添加，更新，移除等操作（插件就是在这段时期起作用）
+
+3. 生成
+   把转换过的 `AST` 生成字符串形式的代码，并创建 `source map`
