@@ -346,3 +346,34 @@ function PromsieAllSettled(promiseArray) {
   })
 }
 ```
+
+#### 数组
+
+1. `Array.flat()` 将数组打平
+
+`arr.flat(Infinity)` 将无限层级打平
+
+```js
+function flatDeep(arr, d = 1) {
+  if (d > 0) {
+    return arr.reduce((res, val) => {
+      if (Array.isArray(val)) {
+        res = res.concat(flatDeep(val, d - 1))
+      } else {
+        res = res.concat(val)
+      }
+      return res
+    }, [])
+  } else {
+    return arr.slice()
+  }
+}
+```
+
+2. `Array.includes()` 数组是否包含
+3. `Array.from()` 将类数组转为真数组，第二个参数就是相当于`Array.map`，为数组内的每一项都执行
+   方法总结：
+
+- [...arguments]
+- Array.from(arguments)
+- Array.prototype.slice.call()
