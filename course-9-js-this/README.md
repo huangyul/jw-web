@@ -142,3 +142,118 @@ obj.getName()()
 ```
 
 解析：一般匿名函数也是会指向全局
+
+###### 显式绑定（call，bind，apply）
+
+```js
+function fn() {
+  console.log(this.a)
+}
+const obj = {
+  a: 1,
+}
+fn.call(obj) // 1
+```
+
+显式绑定一般看第一参数，如果第一个参数为 `null`，则还是会绑定到全局
+
+- 题目一
+
+```js
+function fn() {
+  console.log(this)
+}
+
+// 为啥可以绑定基本类型
+// 1 --> Number(1)
+fn.bind(1).bind(2)()
+```
+
+解析：`bind` 只看第一个 `bind`（堆栈的上下文，上一个，看的顺序的第一个）
+
+```js
+// bind的实现
+//  Yes, it does work with `new (funcA.bind(thisArg, args))`
+if (!Function.prototype.bind)
+  (function () {
+    var ArrayPrototypeSlice = Array.prototype.slice // 为了 this
+    Function.prototype.bind = function (otherThis) {
+      // 调用者必须是函数，这里的 this 指向调用者：fn.bind(ctx, ...args) / fn
+      if (typeof this !== 'function') {
+        // closest thing possible to the ECMAScript 5
+        // internal IsCallable function
+        throw new TypeError(
+          'Function.prototype.bind - what is trying to be bound is not callable'
+        )
+      }
+
+      var baseArgs = ArrayPrototypeSlice.call(arguments, 1), // 取余下的参数
+        baseArgsLength = baseArgs.length,
+        fToBind = this, // 调用者
+        fNOP = function () {}, // 寄生组合集成需要一个中间函数，避免两次构造
+        fBound = function () {
+          // const newFn = fn.bind(ctx, 1); newFn(2) -> arguments: [1, 2]
+          baseArgs.length = baseArgsLength // reset to default base arguments
+          baseArgs.push.apply(baseArgs, arguments) // 参数收集
+          return fToBind.apply(
+            // apply 显示绑定 this
+            // 判断是不是 new 调用的情况，这里也说明了后边要讲的优先级问题
+            fNOP.prototype.isPrototypeOf(this) ? this : otherThis,
+            baseArgs
+          )
+        }
+      // 下边是为了实现原型继承
+      if (this.prototype) {
+        // 函数的原型指向其构造函数，构造函数的原型指向函数
+        // Function.prototype doesn't have a prototype property
+        fNOP.prototype = this.prototype // 就是让中间函数的构造函数指向调用者的构造
+      }
+      fBound.prototype = new fNOP() // 继承中间函数，其实这里也继承了调用者了
+
+      return fBound // new fn()
+    }
+  })()
+```
+
+- 题目二
+
+使用了 `new`，`new` 的优先级比 `bind` 高
+
+```js
+function foo(a) {
+  this.a = a
+}
+
+const f = new foo(2)
+f.a // console what?
+
+// ------------------------- 变 ---------------------------
+function bar(a) {
+  this.a = a
+  return {
+    a: 100,
+  }
+}
+const b = new bar(3)
+b.a // console what ?
+```
+
+- 题目三
+
+箭头函数：箭头函数本身是没有 `this` 的，继承的是外层的
+
+```js
+function fn() {
+  return {
+    b: () => {
+      console.log(this)
+    },
+  }
+}
+
+fn().b() // console what?
+fn().b.bind(1)() // console what?
+fn.bind(2)().b.bind(3)() // console what?
+```
+
+解析：箭头函数没有 `this`，所以哪里定义指向谁，`bind` 对其也不起作用，即无法使用显式绑定改变函数的 `this`，所以答案分别是 `window`，`window`， 1

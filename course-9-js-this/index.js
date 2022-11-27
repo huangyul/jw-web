@@ -1,10 +1,11 @@
-var name = 'the window'
-var obj = {
-  name: 'obj',
-  getName: function () {
-    return function () {
-      console.log(this.name)
-    }
-  },
+function fn() {
+  return {
+    b: () => {
+      console.log(this)
+    },
+  }
 }
-obj.getName()()
+
+fn().b()
+fn().b.bind(1)()
+fn.bind(2)().bind(3)()
