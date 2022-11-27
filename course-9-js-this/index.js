@@ -1,10 +1,10 @@
-const obj = {
-  a: 1,
-  fn: function () {
-    console.log(this.a)
+var name = 'the window'
+var obj = {
+  name: 'obj',
+  getName: function () {
+    return function () {
+      console.log(this.name)
+    }
   },
 }
-
-obj.fn()
-const f = obj.fn
-f()
+obj.getName()()
