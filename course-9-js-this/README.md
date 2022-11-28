@@ -460,3 +460,50 @@ EC(foo) {
   Scope: [AO(foo), VO(global)] // 查找顺序 -> RHS LHS
 }
 ```
+
+特殊情况：
+
+- `Function` 构造的函数 `[[scope]]` 里只有全局的变量对象
+
+```js
+// 证明
+var a = 10
+
+function foo() {
+  var b = 20
+  // 函数声明
+  function f1() {
+    // EC(f1) { Scope: [AO(f1), VO(foo), VO(g)] }
+    console.log(a, b)
+  }
+
+  // 函数表达式
+  var f2 = function () {
+    console.log(a, b)
+  }
+
+  var f3 = Function('console.log(a,b)')
+
+  f1() // 10, 20
+  f2() // 10, 20
+  f3() // 10, b is not defined
+}
+
+foo()
+```
+
+### `with` & `catch` & `eval`
+
+
+
+> 本质上 `eval` 之类的恐怖之处是可以很方便的修改作用域链，**执行完后又回归最初状态**
+
+```js
+// 这样好理解
+Scope = [ withObj|catchObj ].concat( [ AO|VO ].concat( [[ scope ]] ) )
+// 初始状态 [VO(foo), VO(global)]
+// with 一下：[VO(with)❓, VO(foo), VO(global)]
+// with 完事儿了，还要恢复 👈
+```
+
+1:48:51

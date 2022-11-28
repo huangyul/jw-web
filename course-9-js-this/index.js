@@ -1,11 +1,12 @@
-function fn() {
-  return {
-    b: () => {
-      console.log(this)
-    },
-  }
+var a = 15,
+  b = 15
+
+with ({ a: 20 }) {
+  var a = 30,
+    b = 30
+  console.log(a)
+  console.log(b)
 }
 
-fn().b()
-fn().b.bind(1)()
-fn.bind(2)().bind(3)()
+console.log(a)
+console.log(b)
