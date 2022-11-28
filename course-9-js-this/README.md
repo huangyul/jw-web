@@ -257,3 +257,58 @@ fn.bind(2)().b.bind(3)() // console what?
 ```
 
 解析：箭头函数没有 `this`，所以哪里定义指向谁，`bind` 对其也不起作用，即无法使用显式绑定改变函数的 `this`，所以答案分别是 `window`，`window`， 1
+
+### 优先级
+
+1. 隐式优先于默认
+2. 显式优先于隐式
+3. `new` 优先于显式
+
+> TIP 👉 优先级「new 绑」 > 「显绑」 > 「隐绑」 > 「默认绑定」
+
+###### 实战
+
+```js
+// 1.
+function foo() {
+  console.log(this.a) // console what
+}
+var a = 2
+;(function () {
+  'use strict' // 迷惑大家的
+  foo()
+})()
+
+// ‘use strict’在函数内不影响
+
+// 2.
+var name = 'the window'
+
+var object = {
+  name: 'My Object',
+  getName: function () {
+    return this.name
+  },
+}
+object.getName() // console what ?
+object.getName() // console what ?
+;(object.getName = object.getName)() // console what ?
+;(object.getName, object.getName)() // console what ?
+
+// 使用了赋值符号，就会丢失this
+
+// 3.
+var x = 3
+var obj3 = {
+  x: 1,
+  getX: function () {
+    var x = 5
+    return (function () {
+      return this.x
+    })() // ⚠️
+  },
+}
+console.log(obj3.getX()) // console what?
+
+// 这里立即执行函数，丢失了this
+```
