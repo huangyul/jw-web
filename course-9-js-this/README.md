@@ -494,16 +494,29 @@ foo()
 
 ### `with` & `catch` & `eval`
 
-
-
 > 本质上 `eval` 之类的恐怖之处是可以很方便的修改作用域链，**执行完后又回归最初状态**
 
 ```js
 // 这样好理解
-Scope = [ withObj|catchObj ].concat( [ AO|VO ].concat( [[ scope ]] ) )
+Scope = [withObj | catchObj].concat([AO | VO].concat([[scope]]))
 // 初始状态 [VO(foo), VO(global)]
 // with 一下：[VO(with)❓, VO(foo), VO(global)]
 // with 完事儿了，还要恢复 👈
+```
+
+```js
+var a = 15,
+  b = 15
+
+with ({ a: 10 }) {
+  var a = 30,
+    b = 30
+  alert(a) // 30
+  alert(b) // 30
+}
+
+alert(a) // ? answer: 15
+alert(b) // 30
 ```
 
 1:48:51
