@@ -34,6 +34,8 @@ touch
 
 ### 使用命令去执行脚本
 
+将 node 脚本变成可执行的脚本
+
 1. 编写 index.js
 
 ```js
@@ -65,3 +67,26 @@ npm link
 现在在命令行里执行`mycli`，就会执行脚本，从而输出`hello cli`
 
 ### 格式化用户的输入
+
+用户在命令行输入的参数，都可以使用 `process.argv` 获取，获取的结果以数组的方式返回
+
+#### 安装所需的依赖
+
+`yarn add commander inquirer`
+
+#### 简单使用
+
+```js
+// <>是必填项，[]是可填项
+// 让用户填写一些表单
+program
+  .arguments('<dir>') // 用户需要输入什么
+  .description('this is a directory') // 描述
+  .action((dir) => {
+    // 拿到后执行什么
+    console.log('--dir', dir)
+  })
+
+// 格式化参数
+program.parse(process.argv)
+```
