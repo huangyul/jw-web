@@ -60,6 +60,8 @@ console.log('hello cli')
 npm link
 ```
 
+> 解除软链接：npm unlink commond
+
 现在在命令行里执行`mycli`，就会执行脚本，从而输出`hello cli`
 
 ### 格式化用户的输入
