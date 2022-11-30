@@ -6,7 +6,7 @@
 2. inquirer：命令行的表单
 3. chalk：命令行中的可变颜色效果
 4. clui：命令行中的 loading 效果
-5. child_proess：node 原生模块，提供一些方法让我们能够执行新的命令
+5. child_prosess：node 原生模块，提供一些方法让我们能够执行新的命令
 
 ## 基本使用
 
@@ -104,4 +104,23 @@ inquirer.prompt([
 ]).then(answers => {
   consle.log('result', answers)
 })
+```
+
+### 定制化文件目录
+
+创建文件目录可以使用 `node` 的原生方法 `fs` 来创建文件，但是存在两个问题：
+
+1. 创建文件的代码和 `cli` 脚本耦合了
+2. 以后要更新创建的目录的结构、内容的时候，可能要重新更新 `cli` 脚本，而对于用户可能不会这么频繁去更新这个依赖，不利于使用
+
+此时可以先创建一个公开的 git 目录，通过命令`git clone`克隆下来
+
+```js
+// 1.获取绝对路径
+const fullDir = path.resolve(process.cwd(), dir)
+console.log('---fullDir', fullDir)
+// 2.构建命令 这里要选中https协议
+const command = `git clone https://github.com/huangyul/${answers.framework}-xxx.git} ${fullDir}`
+// 3. 执行命令
+childProcess.execSync(command)
 ```
