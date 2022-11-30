@@ -5,8 +5,8 @@
 1. commander：命令行中的参数获取
 2. inquirer：命令行的表单
 3. chalk：命令行中的可变颜色效果
-4. clui：命令行中的loading效果
-5. child_proess：node原生模块，提供一些方法让我们能够执行新的命令
+4. clui：命令行中的 loading 效果
+5. child_proess：node 原生模块，提供一些方法让我们能够执行新的命令
 
 ## 基本使用
 
@@ -16,7 +16,12 @@ npm install -g @vue/cli
 vue create app-name
 ```
 
-## 实现一个cli
+## 实现一个 cli
+
+- 必须要创建一个可执行的命令
+- 命令必须提供一些可执行的配置
+- 可交互形式的表单
+- 执行完命令后可以生成一个定制化的目录
 
 #### 创建文件目录
 
@@ -27,30 +32,34 @@ npm init
 touch
 ```
 
-#### 使用命令去执行脚本
+### 使用命令去执行脚本
 
-1. 编写index.js
+1. 编写 index.js
 
 ```js
+// 当文件以脚本的形式执行时，使用什么脚本执行，现在就使用node来执行
 #!/usr/bin/env node
 
 console.log('hello cli')
 ```
 
->! 第一句的作用是当该文件以脚本文件执行时，使用node进行解析
+> ! 第一句的作用是当该文件以脚本文件执行时，使用 node 进行解析
 
-2. 在package.json
+2. 在 package.json
 
 ```json
 "bin": {
-  "mycli": "./index.js"  // 在执行的脚本
+  "mycli": "./index.js"  // 执行的脚本,mycli是脚本的名字
 }
 ```
 
 3. 创建软链接
 
 ```bash
+# 创建软链接，当在node环境中执行mycli，就会执行这个项目里面的mycli命令，从而执行index.js
 npm link
 ```
 
-#### 格式化用户的输入
+现在在命令行里执行`mycli`，就会执行脚本，从而输出`hello cli`
+
+### 格式化用户的输入
