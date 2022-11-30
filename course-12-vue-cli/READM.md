@@ -90,3 +90,18 @@ program
 // 格式化参数
 program.parse(process.argv)
 ```
+
+#### 使用表单操作 `inquirer`
+
+```js
+const inquirer = require('inquirer')
+
+inquirer.prompt([
+  type: 'list',
+  name: 'framework',
+  message: 'which framework do you link',
+  choices: ['react', 'vue']
+]).then(answers => {
+  consle.log('result', answers)
+})
+```
