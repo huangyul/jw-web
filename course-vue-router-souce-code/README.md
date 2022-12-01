@@ -27,3 +27,16 @@ Hash 和 history 的区别
 #### 特性
 
 1. url 中带有一个#，#只是客户端的状态，不会传递给服务器端
+2. hash 值的改变，不会刷新页面
+3. hash 值的更改，会在浏览器访问历史中添加一条记录
+4. hash 值的更改，会触发 hashchange
+
+```js
+location.hash = '#aaa'
+
+window.addEventListener('hashchange', () => {})
+```
+
+5. 如何更改 hash
+   5.1 location.href = '#aaa'
+   5.2 <a href="#user"></a>
