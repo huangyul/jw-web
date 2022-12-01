@@ -40,3 +40,19 @@ window.addEventListener('hashchange', () => {})
 5. 如何更改 hash
    5.1 location.href = '#aaa'
    5.2 <a href="#user"></a>
+
+### History
+
+常见 api
+
+```js
+window.history.back() // 后退
+window.history.forward() // 前进
+window.history.go(n) // 前进或后端n步
+window.history.pushState() // location.href
+window.history.replaceState() // location.replace
+```
+
+#### pushState / replaceState 的参数
+
+
