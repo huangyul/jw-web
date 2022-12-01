@@ -124,3 +124,41 @@ const command = `git clone https://github.com/huangyul/${answers.framework}-xxx.
 // 3. 执行命令
 childProcess.execSync(command)
 ```
+
+### 发布
+
+npm publish
+
+## vue-cli
+
+###
+
+### 插件和预装
+
+都会以 vuescope 开头的，例如 babel 就是@vue/cli-service
+
+#### 安装插件
+
+`vue add xxx` 或 `npm run dev`
+
+### cil 服务
+
+```json
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+```
+
+### 开发浏览器兼容性
+
+默认会使用 babel 进行语法翻译
+
+### 现代化
+
+使用 `npm run build --modern` ，打包出来的产物会有两个版本，支持 esmodule 的现代包，以及不支持的旧浏览器
+
+### HTML preload
+
+预先加载文件，可以让支持的浏览器提前加载资源
