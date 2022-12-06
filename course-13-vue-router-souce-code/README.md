@@ -49,10 +49,58 @@ window.addEventListener('hashchange', () => {})
 window.history.back() // 后退
 window.history.forward() // 前进
 window.history.go(n) // 前进或后端n步
-window.history.pushState() // location.href
-window.history.replaceState() // location.replace
+window.history.pushState() // location.href  页面的浏览记录里会添加一个历史记录
+window.history.replaceState() // location.replace 替换当前的历史记录
 ```
 
 #### pushState / replaceState 的参数
 
+window.history.pushState(null, null, path)
 
+1. state，是一个对象，是一个与指定网址相关的对象，一般不会用
+2. title，新页面的标题。
+3. url 页面的新地址
+
+#### 面试题
+
+1. pushState 时，会触发 popState 事件吗
+
+答案：不会，pushState 和 replaceState 都不会触发，需要手动触发页面的重新渲染
+popState 的触发情况
+
+- 点击浏览器的后退按钮
+- 点击前进
+- js back
+- js forward
+- js go
+
+#### nginx 配置
+
+1. index.html 存在服务器本地
+
+www.xxx.com/main/
+
+无论
+www.xxx.com/main/a
+www.xxx.com/main/b
+都指向 index.html
+
+```nginx
+location /main/ {
+  try_files $uri $uri/ /home/dist/index.html
+}
+```
+
+2. index.html 存在于远程地址 即 index.html 不在服务器上
+
+www.xxx.com/main/a
+
+// 存到
+www.bbb.com/file/index.html
+
+```nginx
+location /main/ {
+  rewrite ^ /file/index.html break;
+  proxy_pass https://www.bbb.com;
+}
+```
