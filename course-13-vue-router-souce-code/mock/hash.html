@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>模拟实现hash路由</title>
+    <style>
+      .container {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        font-size: 18px;
+        font-weight: bold;
+        background: black;
+        color: #fff;
+      }
+      a:link,
+      a:hover,
+      a:active,
+      a:visited {
+        text-decoration: none;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="#gray">灰色</a>
+      <a href="#green">绿色</a>
+      <a href="#">白色</a>
+      <button onclick="window.history.go(-1)">返回</button>
+    </div>
+
+    <script type="text/javascript" src="hash.js"></script>
+  </body>
+</html>
