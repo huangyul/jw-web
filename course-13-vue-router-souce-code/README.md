@@ -110,28 +110,70 @@ location /main/ {
 ```js
 class BaseRouter {
   constructor() {
-    this.routes = {} // 1. 存储path以及callback的对应关系
-
-    // 防止this丢失
-    this.refresh = this.refresh.bind(this)
-    // 2. 首次进入也会加载路由的，也要渲染路由
-    window.addEventListener('load', this.refresh)
-    // 3. 通过hashchange监听路由的改变
-    window.addEventListener('hashchange', this.refresh)
+    this.routes = {}
+    this.initPath(location.pathname)
+    this.bindPopState()
   }
 
-  // 4. 只是存储
   route(path, callback) {
     this.routes[path] = callback || function () {}
   }
 
-  // 刷新页面
-  refresh() {
-    // 5. 获取当前hash
-    const path = `/${location.hash.slice(1)}` || ''
-    this.routes[path]()
+  initPath(path) {
+    // 初始化的时候也要执行一下方法，但是不应该使用pushstate，因为不应该再推入一个
+    window.history.replaceState(null, null, path)
+
+    const cb = this.routes[path]
+    if (cb) cb()
+  }
+
+  go(path) {
+    window.history.pushState(null, null, path)
+    const cb = this.routes[path]
+    if (cb) {
+      cb()
+    }
+  }
+
+  // 首次加载时
+  bindPopState() {
+    window.addEventListener('popState', (e) => {
+      const path = e.state && e.state.path
+      this.routes[path] && this.routes[path]()
+    })
   }
 }
+
+const router = new BaseRouter()
+
+const body = document.querySelector('body')
+
+function changeBgColor(color) {
+  body.style.backgroundColor = color
+}
+
+router.route('/', () => {
+  changeBgColor('white')
+})
+
+router.route('/gray', () => {
+  changeBgColor('gray')
+})
+
+router.route('/green', () => {
+  changeBgColor('green')
+})
+
+// 1. 阻止a标签的默认行为,因为a标签的默认点击相当于 location.href
+const container = document.querySelector('.container')
+container.addEventListener('click', (e) => {
+  if (e.target.tagName == 'A') {
+    e.preventDefault()
+    // 2. 使用自己的方法去跳转
+    router.go(e.target.getAttribute('href'))
+  }
+})
+
 ```
 
 ## 实现history路由

@@ -1,7 +1,7 @@
 class BaseRouter {
   constructor() {
     this.routes = {}
-
+    this.initPath(location.pathname)
     this.bindPopState()
   }
 
