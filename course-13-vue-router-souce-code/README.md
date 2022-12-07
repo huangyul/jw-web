@@ -203,3 +203,17 @@ container.addEventListener('click', (e) => {
   }
 })
 ```
+
+## VueRouter
+
+#### 路由异步加载组件
+
+```js
+{
+  path: '/about',
+  name: 'about',
+  component: () => important('../views/about.vue')
+}
+```
+
+这样引入组件，在首屏加载的时候并不会引入，直到进入该页面，才会引进对应的 js 文件，大大加快了首屏时间
