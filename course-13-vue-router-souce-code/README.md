@@ -217,3 +217,12 @@ container.addEventListener('click', (e) => {
 ```
 
 这样引入组件，在首屏加载的时候并不会引入，直到进入该页面，才会引进对应的 js 文件，大大加快了首屏时间
+
+### 路由守卫的输出顺序
+
+1. 【组件】前一个组件的 beforeRouterLeave
+2. 【全局】beforeEach
+3. 【组件】如果路由参数有变换，/text => /test/1，会触发beforeRouteUpdate
+4. 【配置文件】下一个组件的beforeEnter
+5. 【组件】beforeEnter
+6. 【全局】afterEach
