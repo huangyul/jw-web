@@ -226,3 +226,7 @@ container.addEventListener('click', (e) => {
 4. 【配置文件】下一个组件的beforeEnter
 5. 【组件】beforeEnter
 6. 【全局】afterEach
+
+### 滚动行为
+
+https://router.vuejs.org/zh/guide/advanced/scroll-behavior.html
