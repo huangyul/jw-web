@@ -86,7 +86,7 @@ componentWillMount -> render -> componentDidMount -> componentWillReceiveProps -
 
 ## 常见错误和性能问题
 
-### 异步过程使用单例的event对象
+### 异步过程使用单例的 event 对象
 
 ```jsx
 class App extends Component {
@@ -111,7 +111,42 @@ class App extends Component {
 }
 ```
 
-为什么点击button1会报错：
+为什么点击 button1 会报错：
 
-- 所有react的绑定事情都是通过react处理过的，返回的evnet是react处理过的event，可能是单个实例上的，是共享的，会被改变
-- 使用异步的时候，event可能已经被上一个改变了，所以一般会保存一下当前的event
+- 所有 react 的绑定事情都是通过 react 处理过的，返回的 evnet 是 react 处理过的 event，可能是单个实例上的，是共享的，会被改变
+- 使用异步的时候，event 可能已经被上一个改变了，所以一般会保存一下当前的 event
+
+### 重新渲染的情况
+
+例如将事件传到子组件上时，一般需要使用 bind 绑定 this，使用父组件的 this，但是这样每次传到子组件都是一个新的实例，会造成重新渲染，有性能问题。
+
+解决方法：
+
+```jsx
+// 父组件
+class FatherComponent extends Component {
+  constructor() {
+    this.fun1 = this.fun1.bind(this)
+  }
+  fun1() {
+    // do something
+  }
+
+  render() {
+    return <ChildComponent fun1={this.fun1}></ChildComponent>
+  }
+}
+
+// 子组件
+class ChildComponent extends Component {
+  shouldComponentUpdate(next) {
+    const prev = this.props
+    // 判断是否需要重新渲染
+    if (next.fun1 === prev.fun1) {
+      return false
+    } else {
+      return true
+    }
+  }
+}
+```
