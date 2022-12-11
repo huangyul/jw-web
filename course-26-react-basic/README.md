@@ -31,3 +31,11 @@ const element = <img src={user.avatarUrl}></img>
 - 声明的 react 组件
 - null（最终会渲染一个空元素）
 - 字符串（渲染一个 text 节点）
+
+可以通过 React.isValidElement 来判断一个内容元素是否是合法的元素
+
+### class 和 for 要使用 className 和 htmlFor 代替
+
+### JSX 并不能直接使用，要编译成 React.createElement 的形式
+
+## create-react-app 的使用
