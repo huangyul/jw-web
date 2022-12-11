@@ -64,9 +64,9 @@ class Bar extends React.Component {
 
 区别：
 
-- 加载props的方式不同，函数组件通过props参数获取
-- 函数式组件无法维护状态，class形式可以通过this.state和this.setState方法更新内部state
-- class组件内部可以定义更多的方法在实例
+- 加载 props 的方式不同，函数组件通过 props 参数获取
+- 函数式组件无法维护状态，class 形式可以通过 this.state 和 this.setState 方法更新内部 state
+- class 组件内部可以定义更多的方法在实例
 
 受控和非受控
 
@@ -76,3 +76,10 @@ class Bar extends React.Component {
 // 受控 input的值，保存到state中
 <input value={inputValue}></input>
 ```
+
+## 组件生命周期
+
+componentWillMount -> render -> componentDidMount -> componentWillReceiveProps -> componentWillUpdate -> render -> componentDidUpdate
+
+最好在 componentDidMount
+发送请求
