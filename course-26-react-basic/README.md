@@ -41,4 +41,27 @@ const element = <img src={user.avatarUrl}></img>
 ## create-react-app 的使用
 
 [官方](https://react.docschina.org/docs/create-a-new-react-app.html#create-react-app)
-## 
+
+## 函数组件和 class 组件/受控组件和非受控组件
+
+函数式组件
+
+```jsx
+function Foo(props) {
+  return <div>{props.text || 'Foo'}</div>
+}
+```
+
+class 组件
+
+```jsx
+class Bar extends React.Component {
+  render() {
+    return <div>{this.props.text || 'Bar'}</div>
+  }
+}
+```
+
+区别：
+
+- 加载props的方式不同
