@@ -83,3 +83,35 @@ componentWillMount -> render -> componentDidMount -> componentWillReceiveProps -
 
 最好在 componentDidMount
 发送请求
+
+## 常见错误和性能问题
+
+### 异步过程使用单例的event对象
+
+```jsx
+class App extends Component {
+  render() {
+    function handleBtn1(e) {
+      setTimeout(() => {
+        console.log('button1', e.currentTarget.innerText)
+      }, 1000)
+    }
+    function handleBtn2(e) {
+      console.log('button2', e.currentTarget.innerText)
+    }
+    return (
+      <div className="App">
+        <div className="App-header">
+          <button onClick={handleBtn1}>button1</button>
+          <button onClick={handleBtn2}>button1</button>
+        </div>
+      </div>
+    )
+  }
+}
+```
+
+为什么点击button1会报错：
+
+- 所有react的绑定事情都是通过react处理过的，返回的evnet是react处理过的event，可能是单个实例上的，是共享的，会被改变
+- 使用异步的时候，event可能已经被上一个改变了，所以一般会保存一下当前的event
