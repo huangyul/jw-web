@@ -150,3 +150,30 @@ class ChildComponent extends Component {
   }
 }
 ```
+
+### immer 和 immutable
+
+主要是为了切断变量值之间的互相引用，但是没有改变的变量保持引用，不重新渲染，提高性能
+
+> 为什么不使用深拷贝；因为使用深拷贝断绝引用，就无法判断父组件和子组件之间的引用关系
+
+使用 immer 和 immutable
+
+```jsx
+const { fromJS } = require('immutable')
+
+const a = {
+  key1: {
+    key1key1: 'valuekey1',
+  },
+  key2: {
+    key2key2: 'valuekey2',
+  },
+}
+
+const a = fromJS(data)
+
+b = a.set('key1', 123)
+
+// 此时改变了key1的引用，但还是能保持key2的引用没有断掉
+```
