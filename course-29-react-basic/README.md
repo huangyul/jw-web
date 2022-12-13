@@ -184,3 +184,30 @@ b = a.set('key1', 123)
 
 1. 表达式的使用：{变量}
 2. 大括号（{}）是用来表达绑定的变量，引号是用来指定字符串字面量
+
+### 元素渲染
+
+react 元素是普通对象，react DOM 负责更新 DOM
+
+react 只更新它需要更新的部分，并不会完全把 dom 更新
+
+### 组件&Props
+
+两种声明方式：
+
+```jsx
+// 函数组件
+function Welcome() {
+  return <h1>Hello</h1>
+}
+
+// class组件
+class Welcome2 extends Component {
+  render() {
+    return <h1>Hello2</h1>
+  }
+}
+```
+
+Props 的只读性：  
+无论使用函数声明或 class 声明，都不能改变自身的 props
