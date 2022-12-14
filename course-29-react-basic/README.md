@@ -360,3 +360,26 @@ class LoginControl extends Component {
 #### 阻止条件渲染
 
 可以将 `render` 函数返回 `null`
+
+### 列表和 key
+
+#### 基础渲染多个组件
+
+```jsx
+const numbers = [1, 2, 3, 4]
+const listItem = numbers.map((item) => <li>{item}</li>)
+```
+
+#### 封装
+
+```jsx
+function ItemList(props) {
+  const listItem = props.numbers.map((item) => (
+    <li key={item.toString()}>{item}</li>
+  ))
+}
+```
+
+#### Key
+
+key 帮助 react 识别那些元素改变了，但最好不要使用 index，会导致性能变差和引起组件状态的问题
