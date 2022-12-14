@@ -246,9 +246,9 @@ this.setState({ a: 'xxx' })
 #### 要根据 props 和 state 的值来更新状态
 
 ```jsx
-this.setState((state, props) => {
-  counter: state.counter + props.increment
-})
+this.setState((state, props) => ({
+  counter: state.counter + props.increment,
+}))
 ```
 
 #### State 的更新
@@ -267,5 +267,36 @@ fun1( ){
   this.setState({
     a: 1 // 设置a，会完全替换了a，但b会完整保留
   })
+}
+```
+
+### 事件处理
+
+- 事件的命名采用小驼峰时
+- 使用 `JSX` 语法时需要传入一个函数作为事件处理函数，而不是一个字符串
+
+```jsx
+fun1() {}
+
+<div onClick={fun1}></div>
+```
+
+#### 注意 this
+
+```jsx
+class Todo extends Component {
+  construtor(props) {
+    super(props)
+    // 方法1：
+    this.fun1 = this.fun1.bind(this)
+  }
+  fun1() {
+    // do something
+  }
+
+  // 方法2：实验性语法，需要借助插件
+  fun2 = () => {
+    // do something
+  }
 }
 ```
