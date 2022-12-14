@@ -300,3 +300,63 @@ class Todo extends Component {
   }
 }
 ```
+
+### 条件渲染
+
+#### 可以使用 if 运算符去创建元素来表现状态
+
+```jsx
+function UserGreeting(props) {
+  return <h1>Welcome back</h1>
+}
+function GuestGreeting(props) {
+  return <h1>Please sign up</h1>
+}
+function Greeting(props) {
+  const isLogin = props.isLogin
+  if (isLogin) {
+    return <UserGreeting />
+  } else {
+    return <GuestGreeting />
+  }
+}
+```
+
+#### 使用一个变量来进行条件渲染
+
+```jsx
+class LoginControl extends Component {
+  constructor(props) {
+    super(props)
+    this.handlerLogin = this.handlerLogin.bind(this)
+    this.handlerLogout = this.handlerLogout.bind(this)
+    this.state = {
+      isLogin: false,
+    }
+  }
+
+  handlerLogin() {
+    this.setState({
+      isLogin: true,
+    })
+  }
+  handlerLogout() {
+    this.setState({
+      isLogin: false,
+    })
+  }
+
+  render() {
+    const button = this.state.isLogin ? (
+      <LogoutButton onClick={this.handlerLogout}></LogoutButton>
+    ) : (
+      <LoginButton onClick={this.handlerLogin}></LoginButton>
+    )
+    return button
+  }
+}
+```
+
+#### 阻止条件渲染
+
+可以将 `render` 函数返回 `null`
