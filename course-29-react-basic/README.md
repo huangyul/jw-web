@@ -383,3 +383,52 @@ function ItemList(props) {
 #### Key
 
 key 帮助 react 识别那些元素改变了，但最好不要使用 index，会导致性能变差和引起组件状态的问题
+
+### 表单
+
+#### 受控组件
+
+例如 input 等表单组件，将状态给组件自己维护，使用的使用只是把值取出来
+
+```jsx
+handleChange(event) {
+  this.setState({value: event.target.value})
+}
+```
+
+#### 非受控组件（react 推荐使用处理表单数据）
+
+可以使用 ref 来从 dom 节点中获取表单数据
+
+```jsx
+class NameForm extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+    this.input = React.createRef()
+  }
+
+  getData() {
+    console.log(this.input.current.value)
+  }
+
+  render() {
+    return (
+      <form>
+        <input ref={this.input}></input>
+      </form>
+    )
+  }
+}
+```
+
+##### 默认值
+
+```jsx
+<input defaultValue="value"></input>
+```
+
+#### 小总结
+
+- 受控组件的 `state` 交给表单组件自己维护，每次需要写函数去获取最新的值
+- 非受控组件由 `react` 维护组件的值，通过 `ref` 去获取表单组件的值
