@@ -211,3 +211,61 @@ class Welcome2 extends Component {
 
 Props 的只读性：  
 无论使用函数声明或 class 声明，都不能改变自身的 props
+
+### State & 生命周期
+
+state 是组件私有的属性，等同于 vue 中的 data
+
+使用方式：
+
+```jsx
+class ComponentA extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { time: 'xxx' }
+  }
+}
+```
+
+生命周期：
+
+- componentDidMount：组件被挂载后
+- componentWillUnmount：组件被销毁前
+
+#### 关于 State
+
+1. 不能直接修改 State
+
+```jsx
+// 此代码不会重新渲染组件
+this.state.a = 'xxx'
+// 正确的用法
+this.setState({ a: 'xxx' })
+```
+
+#### 要根据 props 和 state 的值来更新状态
+
+```jsx
+this.setState((state, props) => {
+  counter: state.counter + props.increment
+})
+```
+
+#### State 的更新
+
+```jsx
+constructor(props) {
+  super(props)
+  // 有两个值
+  this.state = {
+    a: 1,
+    b: 2
+  }
+}
+
+fun1( ){
+  this.setState({
+    a: 1 // 设置a，会完全替换了a，但b会完整保留
+  })
+}
+```
