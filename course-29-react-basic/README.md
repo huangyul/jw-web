@@ -292,6 +292,7 @@ class Todo extends Component {
   }
   fun1() {
     // do something
+    // ...
   }
 
   // 方法2：实验性语法，需要借助插件
