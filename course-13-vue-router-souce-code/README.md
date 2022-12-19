@@ -10,7 +10,7 @@
 ## 前端路由原理及其表现
 
 vue -> hash, history
-react -> hase, history
+react -> hash, history
 
 1. 页面间的交互不会刷新页面
 2. 不同 url/路径/路由，会渲染不同的内容
