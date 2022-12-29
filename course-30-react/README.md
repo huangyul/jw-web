@@ -188,3 +188,39 @@ function ItemList(props) {
 
 - 受控组件：表单的 `value` 通过 `state` 来维护，统一使用 `setState（）`来更新
 - 非受控组件：`value` 通过 `input` 标签自己维护，使用 re`f 来获取
+
+### 状态提升
+
+将子组件中的 `state` 和方法都移到父组件上，进行统一管理
+
+```jsx
+// 子组件中
+class ComA extends Component {
+  constructor(props) {
+    super(props)
+    this.handleChange = this.handleChange.bind(this)
+  }
+  handleChange(event) {
+    this.props.onSomethingChange(e.target.value)
+  }
+}
+// 父组件中
+class ComB extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {value: ''}
+    this.handleChange = this.handleChange.bind(this)
+  }
+  handleChange(value) {
+    // doSomething
+    this.setState({
+      value: value
+    })
+  }
+  render() {
+    return (
+      <ComA value={this.state.value} onSomethingChange={this.handleChange}>
+    )
+  }
+}
+```
