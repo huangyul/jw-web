@@ -163,3 +163,21 @@ function ComponentA(props) {
   }
 }
 ```
+
+### 列表 & Key
+
+使用函数遍历生成标签
+
+```jsx
+function ItemList(props) {
+  const numbers = [1, 2, 3, 4]
+  const liList = numbers.map((i) => <li>{i}</li>)
+  return <ul>{liList}</ul>
+}
+```
+
+#### Key
+
+- 使用 `Key` 可以帮助 `React` 识别哪些元素改变了
+- 一般使用数据中的 `id`，万不得已才使用 `index`，因为使用 `index` 会导致性能变差，还会引起组件状态的问题
+- `key` 在兄弟节点必须唯一，其他情况可以不唯一，也就是每次遍历保证唯一即可
