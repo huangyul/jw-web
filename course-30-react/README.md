@@ -86,3 +86,51 @@ this.setState((state, props) => ({
   counter: state.counter + 1,
 }))
 ```
+
+### 事件处理
+
+语法：
+
+- `React` 事件的命名采用小驼峰，而不是纯小写
+- 使用 `JSX` 语法时需要传入一个函数作为事件处理函数
+
+```jsx
+<button onClick={handleClick}>button</button>
+```
+
+#### this
+
+在使用 class 语法定义一个组件时，默认不会绑定 this，需要在构造函数绑定一下，也可以使用箭头函数
+
+```jsx
+class Toggle extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { isToggleOn: true }
+    // 绑定一下方法
+    this.handleClick = this.handleClick.bind(this)
+  }
+  handleClick() {
+    this.setState((state) => ({
+      isToggleOn: !state.isToggleOn,
+    }))
+  }
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    )
+  }
+}
+```
+
+#### 向事件处理程序传递参数
+
+- 使用箭头函数，必须要显示传递事件对象 `e`
+- 使用 `bind` 的方式，事件对象以及更多的参数将会被隐式进行传递
+
+```jsx
+<button onClick={(e) => this.deleteRow(id, e)}></button>
+<button onClick={this.deleteRow.bind(this, id)}></button>
+```
