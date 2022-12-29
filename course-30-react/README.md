@@ -134,3 +134,32 @@ class Toggle extends Component {
 <button onClick={(e) => this.deleteRow(id, e)}></button>
 <button onClick={this.deleteRow.bind(this, id)}></button>
 ```
+
+### 条件渲染
+
+一般都是使用 if 或运算符进行判断 z
+
+```jsx
+// 第一种方式
+if (this.xxx) {
+  return <h1>xxx</h1>
+} else {
+  return <h1>aaaa</h1>
+}
+
+// 第二种
+this.xxx > 0 && <h2>xxxx</h2>
+
+// 第三种
+this.xxx ? <h1>xxx</h1> : <h2>xxxx</h2>
+```
+
+如果需要不渲染组件，可以返回 `null`
+
+```jsx
+function ComponentA(props) {
+  if (!props.xxx) {
+    return null
+  }
+}
+```
