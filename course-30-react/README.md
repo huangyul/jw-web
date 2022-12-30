@@ -41,7 +41,7 @@ class Welcome extends Component {
 
 #### props
 
-- 当 `React` 元素为用户自定义组件时，它会将 `JSX` 所接收的属性（attributes）以及子组件（children）转换为单个对象传递给组件，这个对象就是 props
+- 当 `React` 元素为用户自定义组件时，它会将 `JSX` 所接收的属性（attributes）以及子组件（children）转换为单个对象传递给组件，这个对象就是 `props`
 - `props` 对于子组件是只读的，不能修改自身的 `props`
 
 ### State & 生命周期
@@ -137,7 +137,7 @@ class Toggle extends Component {
 
 ### 条件渲染
 
-一般都是使用 if 或运算符进行判断 z
+一般都是使用 if 或运算符进行判断
 
 ```jsx
 // 第一种方式
@@ -220,6 +220,52 @@ class ComB extends Component {
   render() {
     return (
       <ComA value={this.state.value} onSomethingChange={this.handleChange}>
+    )
+  }
+}
+```
+
+### 组合vs继承
+
+#### 包含关系（相当于插槽）
+
+```jsx
+function WelcomeDialog(props) {
+  return (
+    <div>
+      {/* 默认插槽 */}
+      {props.children}
+      {/* 具名插槽 */}
+      {props.scopeName}
+    </div>
+  )
+}
+
+<WelcomeDialog scopeName={<div>具名插槽</div>}>
+  <div>默认插槽</div>
+</WelcomeDialog>
+
+```
+
+#### 使用Props和组合定制组件
+
+```jsx
+// 开发一个通用的组件
+class ComA extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
+  render() {
+    return(
+      <div>
+        <div className="title">
+          {this.props.title}
+        </div>
+        <div className="content">
+          {this.props.children}
+        </div>
+      </div>
     )
   }
 }
