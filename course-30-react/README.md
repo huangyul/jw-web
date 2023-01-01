@@ -288,3 +288,22 @@ function Com() {
   )
 }
 ```
+
+### Effect Hook
+
+useEffect 就是给函数组件增加操作副作用的能力（就是 vue 中的 watch）
+
+```jsx
+function Com() {
+  const [count, setCount] = useState()
+
+  useEffect(() => {
+    document.title = `点击了${count}次`
+
+    // 使用return函数消除副作用
+    return () => {
+      // dosomething
+    }
+  }, [count])
+}
+```
