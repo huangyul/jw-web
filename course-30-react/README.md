@@ -225,7 +225,7 @@ class ComB extends Component {
 }
 ```
 
-### 组合vs继承
+### 组合 vs 继承
 
 #### 包含关系（相当于插槽）
 
@@ -241,13 +241,12 @@ function WelcomeDialog(props) {
   )
 }
 
-<WelcomeDialog scopeName={<div>具名插槽</div>}>
+;<WelcomeDialog scopeName={<div>具名插槽</div>}>
   <div>默认插槽</div>
 </WelcomeDialog>
-
 ```
 
-#### 使用Props和组合定制组件
+#### 使用 Props 和组合定制组件
 
 ```jsx
 // 开发一个通用的组件
@@ -257,16 +256,35 @@ class ComA extends Component {
     this.state = {}
   }
   render() {
-    return(
+    return (
       <div>
-        <div className="title">
-          {this.props.title}
-        </div>
-        <div className="content">
-          {this.props.children}
-        </div>
+        <div className="title">{this.props.title}</div>
+        <div className="content">{this.props.children}</div>
       </div>
     )
   }
+}
+```
+
+## HOOK
+
+Hook 是一些可以让你在函数组件中钩入 React State 及生命周期的函数
+
+### 基本使用
+
+```jsx
+function Com() {
+  // 定义一个变量count，初始值为0，定义一个方法修改它
+  const [count, setCount] = useState(0)
+  return (
+    <div>
+      {count}
+      <button
+        onClick={() => {
+          setCount(count++)
+        }}
+      ></button>
+    </div>
+  )
 }
 ```
