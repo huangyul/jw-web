@@ -265,3 +265,18 @@ setTimeout(() => {
   console.log('promise2', promise2)
 }, 2000)
 ```
+
+4. catch 后如果有返回值，也是会包装成一个 promise 的
+
+```js
+const p = new Promsie((resolve, reject) => {
+  reject(123)
+})
+p.catch((reason) => {
+  console.log(reason)
+  // 如果有返回，后面的then或者catch也能继续拿到值
+  return 123
+}).then((value) => {
+  console.log(value) // 123 如果没有返回，则undefined
+})
+```
