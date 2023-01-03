@@ -220,6 +220,11 @@ class MPromise {
     })
   }
 
+  /**
+   * 返回第一个结果，无论fulfilled还是rejected
+   * @param {*} promiseList
+   * @returns
+   */
   static race(promiseList) {
     return new MPromise((resolve, reject) => {
       const length = promiseList.length
@@ -240,12 +245,100 @@ class MPromise {
       }
     })
   }
+
+  /**
+   * 返回全部fulfilled的结果，只要有一个reject，那就reject第一个失败的值
+   * @param {*} promiseList
+   * @returns
+   */
+  static all(promiseList) {
+    return new MPromise((resolve, reject) => {
+      const len = promiseList.length
+      let count = 0
+      const res = []
+      promiseList.forEach((p) => {
+        p.then((value) => {
+          count++
+          res.push(value)
+          if (count == len) {
+            return resolve(res)
+          }
+        }).catch((reason) => {
+          return reject(reason)
+        })
+      })
+    })
+  }
+
+  /**
+   * 只返回第一个fulfilled，如果全都失败了，则reject所有失败的结果
+   * @param {*} promiseList
+   * @returns
+   */
+  static any(promiseList) {
+    return new MPromise((resolve, reject) => {
+      let count = 0,
+        reasonList = []
+      promiseList.forEach((p) => {
+        p.then((value) => {
+          return resolve(value)
+        }).catch((reason) => {
+          reasonList.push(reason)
+          count++
+          if (count === promiseList.length) {
+            return reject(reasonList)
+          }
+        })
+      })
+    })
+  }
+
+  /**
+   * 总是将promise的结果resolve出来，无论里面的promise成功还是失败
+   * @param {*} promise
+   */
+  static allSettled(promiseList) {
+    return new MPromise((resolve) => {
+      const len = promiseList.length
+      let res = [],
+        count = 0
+      promiseList.forEach((p) => {
+        p.then((value) => {
+          res.push({ status: 'fulfilled', value })
+          count++
+          if (count === len) {
+            resolve(res)
+          }
+        }).catch((reason) => {
+          res.push({ status: 'rejected', reason })
+          count++
+          if (count === len) {
+            resolve(res)
+          }
+        })
+      })
+    })
+  }
 }
 
-const p = new MPromise((resolve, reject) => {
-  resolve(123)
+const p1 = new MPromise((resolve) => {
+  setTimeout(() => {
+    resolve('p1 3秒')
+  }, 3000)
 })
 
-p.then().then((value) => {
+const p2 = new MPromise((resolve, reject) => {
+  setTimeout(() => {
+    reject('p2 1秒')
+  }, 1000)
+})
+
+const p3 = new MPromise((resolve) => {
+  setTimeout(() => {
+    resolve('p3 5秒')
+  }, 5000)
+})
+
+MPromise.allSettled([p1, p2, p3]).then((value) => {
   console.log(value)
 })
