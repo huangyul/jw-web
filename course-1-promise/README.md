@@ -96,7 +96,7 @@ then 是一个函数，then.call(x, resolvePromiseFn, rejectPromiseFn)
 3. 初始化状态 pending
 
 4. resolve 和 reject 方法  
-   4.1 在两个方法都要更改 status，一定是从 pending 才能改变    
+   4.1 在两个方法都要更改 status，一定是从 pending 才能改变  
    4.2 入参分别是 value 和 reason
 
 5. 对于实例化的 promise 时的入参处理  
@@ -189,7 +189,7 @@ setTimeout(() => {
 1. catch 返回一个新的 promise， 而 test 是这个新的 promise，就是整个代码的返回
 2. catch 的回调里去打印，还没执行完，所以状态还是 pending，只有当回调执行完成了，无论是成功还是失败，才会改变状态
 
-### 常见题目
+## 常见题目
 
 1. 题目一
 
@@ -207,4 +207,61 @@ const timer1 = setTimeout(() => {
   })
 }, 0)
 console.log('start')
+```
+
+## 易错点
+
+1. promise 执行 then 后，是微任务，此时状态为 pending
+
+```js
+const p1 = new Promsie((resolve) => {
+  resolve('p1')
+})
+const p2 = p1.then(() => {
+  // dosomething
+})
+
+console.log(p2) // pending
+```
+
+2. 微任务里的宏任务也要放到下一轮事件循环中
+
+```js
+Promise.resolve().then(() => {
+  console.log('promise1')
+  const timer2 = setTimeout(() => {
+    // 这里，这个宏事件要比timer1还要晚
+    console.log('timer2')
+  }, 0)
+})
+const timer1 = setTimeout(() => {
+  console.log('timer1')
+  Promise.resolve().then(() => {
+    console.log('promise2')
+  })
+}, 0)
+console.log('start')
+```
+
+3. promise 状态没有改变时，then 会在下一轮 promise 状态被改变后放到微任务执行
+
+```js
+const promise1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    // 宏2
+    resolve('success')
+  }, 1000)
+})
+const promise2 = promise1.then(() => {
+  // 这里的代码会在宏2执行完后，再执行
+  console.log('ooo')
+  return 123
+})
+console.log('promise1', promise1)
+console.log('promise2', promise2)
+setTimeout(() => {
+  // 宏3
+  console.log('promise1', promise1)
+  console.log('promise2', promise2)
+}, 2000)
 ```
