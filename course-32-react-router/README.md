@@ -16,3 +16,23 @@
 - `url`：要跳转的 `url`
 
 相同点：都不会刷新页面，也不会发生真正的跳转
+
+### hash
+
+基于 location.hash = pathString 来更新网站路径，pathString 就是#后面直到 search 的部分
+
+## vue-router
+
+### vue.use
+
+要通过 vue.use 注册的插件，必须暴露一个 install 方法
+
+```js
+import Modal from './modal.vue'
+class MyModal = {
+  install(vue) {
+    // 全局注册一个自定义组件（通过相同原理可注册routerview和routerlink）
+    vue.component('ModalView', Modal)
+  }
+}
+```
