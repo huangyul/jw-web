@@ -25,7 +25,7 @@
 
 ### vue.use
 
-要通过 vue.use 注册的插件，必须暴露一个 install 方法
+要通过 `vue.use` 注册的插件，必须暴露一个 `install` 方法
 
 ```js
 import Modal from './modal.vue'
