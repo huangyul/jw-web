@@ -36,3 +36,37 @@ class MyModal = {
   }
 }
 ```
+
+### install
+
+vue-router 主要做了下列的事
+
+```js
+class router {
+  // 1. 暴露install方法
+  static install(Vue) {
+    // 2. install接收vue作为参数
+    // 3. install只执行一次
+    if(install.installed && _Vue = Vue) return
+  }
+
+  // 4. 使用vue.mixin(因为这样可以使用到vue的生命周期)，完成router的配置
+  Vue.mixin({
+    beforeCreate() {},
+    destroyed() {}
+  })
+
+  // 5. 定义全局$router和$route方法
+  Object.defineProperty(Vue.prototype, '$router', {
+    get() {return this._routerRoot._router}
+  })
+  Object.defineProperty(Vue.prototype, '$router', {
+    get() {return ...}
+  })
+
+  // 6. 注册routerview和routerlink组件
+  Vue.component('RouterView', View)
+  Vue.component('RouterLink', Link)
+
+}
+```
