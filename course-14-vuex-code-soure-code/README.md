@@ -115,3 +115,37 @@ function resetStoreVM(store, state) {
   })
 }
 ```
+
+#### actions/mutations
+
+```js
+class Store {
+
+  // 定义行为，分别对应异步和同步行为处理
+  this.actions = {}
+  this.mutations = {}
+  _.forEach(options.mutations, (name, mutation) => {
+    this.mutations[name] = palyed => {
+      // 最终执行的就是 this._vm_data.$$state.xxx = xxx
+      mutation(this.state, payload)
+    }
+  })
+
+  _.forEach(options.actions, (name, action) => {
+    this.actions[name] = payload => {
+      // action，在这里传入this，这样就可以在异步里面通过commit触发mutation同步数据变化
+      action(this, payload)
+    }
+  })
+
+  // 触发mutations的方式固定是commit
+  commit(type, payload) {
+    this.mutations[type](payload)
+  }
+
+  dispatch(type, payload) {
+    this.actions[type](payload)
+  }
+}
+
+```
