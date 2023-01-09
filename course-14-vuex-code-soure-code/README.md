@@ -17,4 +17,94 @@
 - 集中管理：消除重复的状态问题，避免不对等的风险；代码更好维护；编译测试；
 - 单一原则，约定的方式去使用共享状态：可预测状态的变化
 
+**如何和 vue 集成？**
 
+使用插件的模式，通过 mixin 将$store 快速访问 store 属性
+
+**如何让 vuex 是响应式的？**
+
+利用 vue 的 data 是响应式
+
+### 源码编写
+
+#### store 注册
+
+> [开发 vue 插件](https://cn.vuejs.org/v2/guide/plugins.html)
+
+```js
+let Vue
+
+// vue 插件必须有install函数
+export function install(_Vue) {
+  let Vue = _Vue
+  // 通过mixin注入到每一个vue使用，因为mixin中有生命周期
+  Vue.mixin({ beforeCreate: vuexInit })
+
+  function vuexInit() {
+    const options = this.$options
+    if (options.store) {
+      this.$store =
+        typeof options.store === 'function' ? options.store() : options.store
+    } else if (options.parent && options.parent.$store) {
+      this.$store = options.parent.$store
+    }
+  }
+}
+```
+
+#### 响应式
+
+使用 `vue` 的 `data` 自带响应式的原理
+
+```js
+export class Store() {
+  constuctor(options) {
+    resetStoreVM(this, options.state)
+  }
+
+  get state() {
+    return this._vm._data.$$state
+  }
+}
+
+function resetStoreVM(store, state) {
+  // 直接利用vue中的data是响应式的
+  store._vm = new Vue({
+    data: {
+      $$state: state
+    }
+  })
+}
+```
+
+#### 衍生数据（getter）
+
+```js
+class Store {
+  constructor(options) {
+    const state = options
+
+    resetStoreVM(this, state)
+
+    // 实现getter
+    /**
+     * getter 的简单使用
+     * {a: (state) => return state.b * 2}
+     */
+    this.getters = {}
+    _.forEach(this.getters, (name, getterFn) => {
+      Object.defineProperty(this.getters, name, {
+        get: () => getterFn(this.state),
+      })
+    })
+  }
+}
+
+function resetStoreVM(store, state) {
+  store._vm = new Vue({
+    data: {
+      $$state: state,
+    },
+  })
+}
+```
