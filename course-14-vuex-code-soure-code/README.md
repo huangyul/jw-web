@@ -79,6 +79,9 @@ function resetStoreVM(store, state) {
 
 #### 衍生数据（getter）
 
+1. 收集 getters 的依赖
+2. 使用拦截器，执行 getters 依赖的方法
+
 ```js
 class Store {
   constructor(options) {
