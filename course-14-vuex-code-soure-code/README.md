@@ -98,6 +98,10 @@ class Store {
       })
     })
   }
+
+  get state() {
+    this._vm.data.$$state
+  }
 }
 
 function resetStoreVM(store, state) {
