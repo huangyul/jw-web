@@ -399,6 +399,75 @@ Step6 - 插件机制
 ;(options.plugins || []).forEach((plugin) => plugin(this))
 ```
 
+##### mini 版 vuex 源码实现
+
+```js
+let Vue
+
+export default function install(_Vue) {
+  Vue = _Vue
+
+  // 在beforeCreate生命周期中挂在$store
+  Vue.mixin({
+    beforeCreate: initVuex,
+  })
+
+  function initVuex() {
+    const options = this.$options
+    if (options.store) {
+      this.$store =
+        typeof options.store === 'function' ? options.store() : options.store
+    } else if (options.parent && options.parent.$store) {
+      this.$store = options.parent.$store
+    }
+  }
+}
+
+export class Store {
+  constructor(options) {
+    // state
+    resetStoreVM(this, options.state)
+
+    // getters
+    this.getters = options.getters
+    let _this = this
+    Object.entries(this.getters).forEach(([name, getterFn]) => {
+      Object.defineProperty(this.getters, name, {
+        get() {
+          return getterFn(_this.state)
+        },
+      })
+    })
+
+    // mutations
+    this.mutations = options.mutations
+    Object.entries(this.mutations).forEach(([name, mutation]) => {
+      this.mutations[name] = (payload) => {
+        mutation(this.state, payload)
+      }
+    })
+  }
+
+  get state() {
+    return this._vm._data.$$state
+  }
+
+  commit(type, payload) {
+    this.mutations[type](payload)
+  }
+}
+
+function resetStoreVM(store, state) {
+  store._vm = new Vue({
+    data() {
+      return {
+        $$state: state,
+      }
+    },
+  })
+}
+```
+
 以上只是以最简化的代码实现了 `vuex` 核心的 `state` `module` `actions` `mutations` `getters` 机制，如果对源代码感兴趣，可以看看[若川的文章](https://juejin.cn/post/6844904001192853511#heading-12)
 
 ## SSR
