@@ -1,5 +1,6 @@
 export class Vue {
   constructor(options) {
+    // 1. 收集options里面的东西
     this.$options = options
     this.$el =
       typeof options.el === 'string'
@@ -8,9 +9,11 @@ export class Vue {
     this.$data = options.data
     this.$methods = options.methods
 
+    // 2. 将data代理一下，方便使用
     // 代理一下data
     this.proxy(this.$data)
 
+    // 3. 拦截data
     // 拦截this.$data
     new Observer(this.$data)
   }
@@ -38,6 +41,10 @@ export class Vue {
 function __isNaN(a, b) {
   return Number.isNaN(a) && Number.isNaN(b)
 }
+
+// 响应式的意义
+// 定义的东西被修改，页面也要自动改变
+// 发布订阅模式
 class Observer {
   constructor(data) {
     this.walk(data)
@@ -48,6 +55,7 @@ class Observer {
       this.defineReactive(data, key, data[key])
     })
   }
+  // 3.1 将data拦截
   defineReactive(obj, key, value) {
     let that = this
     this.walk(value) // 因为值也可能是对象，也需要变成响应式
@@ -64,8 +72,23 @@ class Observer {
         if (newValue === value) return
         value = newValue
         // 新的值也可能是对象
-        this.walk(newValue)
+        that.walk(newValue)
       },
     })
+  }
+}
+
+// 4. 收集器
+class Dep {
+  constructor() {
+    this.deps = new Set()
+  }
+  // 收集依赖
+  add(dep) {
+    if (dep && dep.update) this.deps.add(dep)
+  }
+  // 通知依赖
+  notify() {
+    this.deps.forEach((dep) => dep.update())
   }
 }
