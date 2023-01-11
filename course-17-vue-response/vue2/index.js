@@ -59,11 +59,13 @@ class Observer {
   defineReactive(obj, key, value) {
     let that = this
     this.walk(value) // 因为值也可能是对象，也需要变成响应式
-
+    let dep = new Dep()
     Object.defineProperty(obj, key, {
       configurable: true,
       enumerable: true,
       get() {
+        // 收集依赖
+        Dep.target && dep.add(Dep.target)
         return value
       },
       set(newValue) {
@@ -73,6 +75,8 @@ class Observer {
         value = newValue
         // 新的值也可能是对象
         that.walk(newValue)
+        // 发布
+        dep.notify()
       },
     })
   }
