@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script type="module">
+    import { h } from './h.js'
+    import { render } from './render.js'
+    const vnode = h(
+      'ul',
+      {
+        id: 'ul-test',
+        className: 'padding-20',
+        style: {
+          padding: '10px'
+        }
+      },
+      h('li', { key: 'li-0' }, 'this is li 01')
+    )
+
+    const nextVNode = h(
+      'ul',
+      {
+        style: {
+          width: '100px',
+          height: '100px',
+          backgroundColor: 'green'
+        }
+      },
+      [
+        h('li', { key: 'li-a' }, 'this is li a'),
+        h('li', { key: 'li-b' }, 'this is li b'),
+        h('li', { key: 'li-c' }, 'this is li c'),
+        h('li', { key: 'li-d' }, 'this is li d'),
+      ]
+    )
+
+    const lastVNode = h(
+      'ul',
+      {
+        style: {
+          width: '100px',
+          height: '200px',
+          backgroundColor: 'pink'
+        }
+      },
+      [
+        h('li', { key: 'li-a' }, 'this is li a'),
+        h('li', { key: 'li-c' }, 'this is li c'),
+        h('li', { key: 'li-d' }, 'this is li d'),
+        h('li', { key: 'li-f' }, 'this is li f'),
+        h('li', { key: 'li-b' }, 'this is li b'),
+      ]
+    )
+
+
+    render(vnode, document.querySelector('#app'))
+
+    setTimeout(() => render(nextVNode, document.querySelector('#app')), 2000)
+    setTimeout(() => render(lastVNode, document.querySelector('#app')), 4000)
+  </script>
+</head>
+<body>
+  <div id='app'></div>
+</body>
+</html>

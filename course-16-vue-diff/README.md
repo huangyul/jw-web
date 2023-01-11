@@ -87,3 +87,5 @@ createElement('div', {
 5. diff (patch)
    f(oldVnodtree, newVnodeTree, parent) -> 调度 -> view
    调度：不让每次遍历就更新 dom，防止界面阻塞
+
+
