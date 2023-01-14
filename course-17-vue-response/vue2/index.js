@@ -65,6 +65,7 @@ class Observer {
       enumerable: true,
       get() {
         // 收集依赖
+        // target 是watcher实例
         Dep.target && dep.add(Dep.target)
         return value
       },
@@ -75,7 +76,7 @@ class Observer {
         value = newValue
         // 新的值也可能是对象
         that.walk(newValue)
-        // 发布
+        // 发布，触发副作用
         dep.notify()
       },
     })
@@ -89,10 +90,33 @@ class Dep {
   }
   // 收集依赖
   add(dep) {
+    // update是执行依赖，执行副作用
     if (dep && dep.update) this.deps.add(dep)
   }
   // 通知依赖
   notify() {
     this.deps.forEach((dep) => dep.update())
+  }
+}
+
+// 5.
+// 模板初始化的时候，分析模板，将有双大括号包裹起来的值收集起来
+class Watcher {
+  // vm是Vue的实例
+  constructor(vm, key, cb) {
+    this.vm = vm
+    this.key = key
+    this.cb = cb
+
+    Dep.target = this
+    // 拿到当前的key，存下初始值；会触发一次getter，会收集一个依赖
+    this.__old = vm[key]
+    // 避免内存溢出
+    Dep.target = null
+  }
+  update() {
+    let newValue = this.vm[this.key]
+    if (this.__old === newValue || __isNaN(newValue, this.__old)) return
+    this.cb(newValue)
   }
 }
