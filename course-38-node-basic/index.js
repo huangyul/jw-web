@@ -1,5 +1,5 @@
 const path = require('path')
 
-const resolvePath = path.resolve(__dirname, 'a', 'b')
-
-console.log(resolvePath)
+console.log(path.extname(__filename))
+console.log(path.basename(__filename))
+console.log(path.dirname(__filename))

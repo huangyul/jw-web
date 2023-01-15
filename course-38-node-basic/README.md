@@ -47,3 +47,13 @@ npx create-react-app react-demo
 - 前者会返回绝对路径，后者是简单拼接
 - 都支持".",".."的解析
 - 带有斜杠的情况，`path.resolve('a','b/')`：会分析，如果是文件夹，就会自动处理不显示；`path.join('b/')`：就是简单的字符串拼接，会显示
+
+###### `__dirname` 和 `__filename`
+
+- 前者是当前的绝对路径，后者是当前的绝对路径加文件名称
+
+```js
+console.log(path.extname(__filename)) // 返回文件后缀名
+console.log(path.basename(__filename)) // 返回文件名
+console.log(path.dirname(__filename)) // 返回文件目录
+```
