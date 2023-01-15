@@ -16,6 +16,8 @@ export class Vue {
     // 3. 拦截data
     // 拦截this.$data
     new Observer(this.$data)
+
+    new Compiler(this)
   }
 
   // 代理一下，可以直接使用data里面的值   this.$data.xx -> this.xxx
@@ -99,7 +101,7 @@ class Dep {
   }
 }
 
-// 5.
+// 5
 // 模板初始化的时候，分析模板，将有双大括号包裹起来的值收集起来
 class Watcher {
   // vm是Vue的实例
@@ -118,5 +120,90 @@ class Watcher {
     let newValue = this.vm[this.key]
     if (this.__old === newValue || __isNaN(newValue, this.__old)) return
     this.cb(newValue)
+  }
+}
+
+// 6
+// 模板解析
+class Compiler {
+  constructor(vm) {
+    this.el = vm.$el
+    this.vm = vm
+    this.methods = vm.methods
+
+    this.compile(vm.$el)
+  }
+
+  compile(el) {
+    let childNodes = el.childNodes
+    Array.from(childNodes).forEach((node) => {
+      if (this.isTextNode(node)) {
+        // 如果是文本节点
+        this.compileText(node)
+      } else if (this.isElementNode(node)) {
+        // 如果是元素节点
+        this.compileElement(node)
+      }
+
+      if (node.childNodes && node.childNodes.length) this.compile(node)
+    })
+  }
+  isTextNode(node) {
+    return node.nodeType === 3
+  }
+  isElementNode(node) {
+    return node.nodeType === 1
+  }
+  compileElement(node) {
+    // <input v-model="msg">  主要是处理v-指令
+    if (node.attributes.length) {
+      Array.from(node.attributes).forEach((attr) => {
+        let attrName = attr.name
+        if (this.isDirective(attrName)) {
+          // 如果是指令
+          // v-on:click=""   v-model=""
+          attrName =
+            attrName.indexOf(':') > -1 ? attrName.substr(5) : attrName.substr(2)
+          let key = attr.value
+          this.update(node, key, attrName, this.vm[key])
+        }
+      })
+    }
+  }
+  update(node, key, attrName, value) {
+    if (attrName === 'text') {
+      // 如果是v-text
+      node.textContent = value
+      new Watcher(this.vm, key, (val) => (node.textContent = val))
+    } else if (attrName === 'model') {
+      // v-model
+      node.value = value
+      new Watcher(this.vm, key, (val) => (node.value = val))
+      node.addEventListener('input', () => {
+        this.vm[key] = node.value
+      })
+    } else if (attrName === 'click') {
+      node.addEventListener(attrName, this.methods[key].binds(this.vm))
+    }
+  }
+  compileText(node) {
+    // 比如要解析 this is {{ count }}
+    // 找出两个花括号的值
+    let reg = /\{\{(.+?)\}\}/
+    // 获取node的textcontent
+    let value = node.textContent
+    if (reg.test(value)) {
+      // 根据正则匹配出双花括号里的值，并去掉前后空格
+      let key = RegExp.$1.trim()
+      // 重新将node里面的textContent替换一下，将花括号的值改为this.data里的值
+      node.textContent = value.replace(reg, this.vm[key])
+      // 定义一个watcher，以后遇到setter的时候，修改textContent
+      new Watcher(this.vm, key, (val) => {
+        node.textContent = val
+      })
+    }
+  }
+  isDirective(str) {
+    return str.startsWith('v-')
   }
 }

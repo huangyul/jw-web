@@ -1,10 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body></body>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script type='module'>
+    import { Vue } from './index.js'
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        msg: 'Hello Vue2.x',
+        count: 666
+      },
+      methods: {
+        increase() {
+          this.count++
+        }
+      }
+    })
+  </script>
+</head>
+<body>
+  <div id="app">
+    <h3>{{ msg }}</h3>
+    <h3>{{ count }}</h3>
+    <h1>v-text</h1>
+    <div v-text="msg"></div>
+    <h1>v-model</h1>
+    <input type="text" v-model="msg" >
+    <input type="text" v-model="count">
+    <button v-on:click="increase">按钮</button>
+  </div>
+</body>
 </html>
