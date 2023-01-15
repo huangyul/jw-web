@@ -1,19 +1,25 @@
 const fs = require('fs')
 const path = require('path')
-// error first
-fs.readFile(
-  path.resolve(__dirname, 'README.md'),
-  'utf-8',
-  // err永远是第一个参数
-  function (err, result) {
-    if (err) {
-      console.log('error')
-      return err
-    }
-    console.log('1')
-    console.log(result)
+function promisify(func) {
+  return function (...args) {
+    return new Promise((resolve, reject) => {
+      args.push(function (err, result) {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+      return func.apply(func, args)
+    })
   }
-)
+}
 
-const ctx = fs.readFileSync(path.resolve(__dirname, 'README.md'), 'utf-8')
-console.log(ctx)
+const readFileAsync = promisify(fs.readFile)
+
+readFileAsync(path.resolve(__dirname, 'README.md'), 'utf-8')
+  .then((res) => {
+    console.log(res)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
