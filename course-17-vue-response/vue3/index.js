@@ -26,6 +26,22 @@ function trigger(target, key) {
 }
 
 /**
+ * 5. effect
+ * 收集副作用 compiler + watcher
+ * effect 执行 -> activeEffect 就有值了（更新页面）->触发getter->trach()->activeEffect存起来了->setter(count.value++)->trigger->activeEffect()->页面更新
+ */
+function effect(fn, options = {}) {
+  const __effect = function (...args) {
+    activeEffect = __effect
+    return fn(...args)
+  }
+  if (!options.lazy) {
+    __effect()
+  }
+  return __effect
+}
+
+/**
  * 1. reactive
  * const state = reactive({count: 0})
  * state.a++
@@ -82,21 +98,6 @@ export function ref(target) {
 }
 
 /**
- * 5. effect
- * 收集副作用
- */
-function effect(fn, options = {}) {
-  const __effect = function (...args) {
-    activeEffect = __effect
-    return fn(...args)
-  }
-  if (!options.lazy) {
-    __effect()
-  }
-  return __effect
-}
-
-/**
  * 6. computed
  * computed(() => {return count.value + 1})
  */
@@ -129,3 +130,8 @@ export function mount(instance, el) {
     el.innerHTML = instance.render()
   }
 }
+
+/**
+ * 终结一下
+ * 收集副作用->收集时间（getter）->触发副作用执行（setter）
+ */

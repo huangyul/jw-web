@@ -1,3 +1,7 @@
+// html -> <h1>{{ count }}</h1> -> compiler 发现有 {{ count }}
+// -> new Watcher(vm, 'count', () => renderToView(count)) -> count getter 被触发
+// -> dep.add(watcher实例) -> this.count++ -> count setter -> dep.notify
+// -> () => renderToView(count) -> 页面就变了
 export class Vue {
   constructor(options) {
     // 1. 收集options里面的东西
