@@ -109,3 +109,19 @@ readFileAsync(path.resolve(__dirname, 'README.md'), 'utf-8')
     console.log(err)
   })
 ```
+
+###### http
+
+- 当使用 http 发送请求，就当爬虫使用
+- 当使用 http 接收请求，就当服务器使用
+
+```js
+const http = require('http')
+
+const proxy = http.createServer((req, res) => {
+  res.end('hello world')
+})
+proxy.listen(8888, '127.0.0.1', () => {
+  console.log('serve start')
+})
+```
