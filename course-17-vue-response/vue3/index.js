@@ -90,6 +90,42 @@ function effect(fn, options = {}) {
     activeEffect = __effect
     return fn(...args)
   }
-
+  if (!options.lazy) {
+    __effect()
+  }
   return __effect
+}
+
+/**
+ * 6. computed
+ * computed(() => {return count.value + 1})
+ */
+export function computed(fn) {
+  // 只考虑函数的情况
+  // 延迟计算
+  // const c = computed(() => count.value++) 只有调用c.value才会计算，其实也是先收集依赖，等需要取值的时候再执行副作用方法
+  let __computed
+  const run = effect(fn, { lazy: true })
+  __computed = {
+    get value() {
+      return run()
+    },
+  }
+  return __computed
+}
+
+/**
+ * 7. 渲染
+ */
+export function mount(instance, el) {
+  effect(function () {
+    instance.$data && update(instance, el)
+  })
+
+  instance.$data = instance.setup()
+  update(instance, el)
+
+  function update(instance, el) {
+    el.innerHTML = instance.render()
+  }
 }
