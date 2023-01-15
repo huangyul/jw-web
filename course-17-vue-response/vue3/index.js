@@ -80,3 +80,16 @@ export function ref(target) {
 
   return obj
 }
+
+/**
+ * 5. effect
+ * 收集副作用
+ */
+function effect(fn, options = {}) {
+  const __effect = function (...args) {
+    activeEffect = __effect
+    return fn(...args)
+  }
+
+  return __effect
+}
