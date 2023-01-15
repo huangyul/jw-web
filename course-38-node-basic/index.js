@@ -1,5 +1,19 @@
+const fs = require('fs')
 const path = require('path')
+// error first
+fs.readFile(
+  path.resolve(__dirname, 'README.md'),
+  'utf-8',
+  // err永远是第一个参数
+  function (err, result) {
+    if (err) {
+      console.log('error')
+      return err
+    }
+    console.log('1')
+    console.log(result)
+  }
+)
 
-console.log(path.extname(__filename))
-console.log(path.basename(__filename))
-console.log(path.dirname(__filename))
+const ctx = fs.readFileSync(path.resolve(__dirname, 'README.md'), 'utf-8')
+console.log(ctx)

@@ -57,3 +57,27 @@ console.log(path.extname(__filename)) // 返回文件后缀名
 console.log(path.basename(__filename)) // 返回文件名
 console.log(path.dirname(__filename)) // 返回文件目录
 ```
+
+###### fs
+
+```js
+// 异步
+const fs = require('fs')
+const path = require('path')
+// error first
+fs.readFile(
+  path.resolve(__dirname, 'README.md'),
+  'utf-8',
+  // err永远是第一个参数
+  function (err, result) {
+    if (err) {
+      console.log('error')
+      return err
+    }
+    console.log(result)
+  }
+)
+// 同步
+const ctx = fs.readFileSync(path.resolve(__dirname, 'README.md'), 'utf-8')
+console.log(ctx)
+```
