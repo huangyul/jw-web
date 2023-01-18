@@ -126,4 +126,16 @@ proxy.listen(8888, '127.0.0.1', () => {
 })
 ```
 
-TODO 1:03:00
+## commonJs
+
+`module.export = {}    const xx = require('./xxx.js')`
+
+###### 常见面试题
+
+```js
+exports.key = 'xxx' // 可以导出
+module.exports = 'xxx' // 可以导出
+expports = 'xxx' // 不能导出，是因为切断了引用
+```
+
+## node周边
