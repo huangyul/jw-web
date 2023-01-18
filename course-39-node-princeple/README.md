@@ -58,3 +58,33 @@ res.on('end', function () {
   console.log(data)
 })
 ```
+
+###### 乱码的产生
+
+```js
+const fs = require('fs')
+const path = require('path')
+
+const res = fs.createReadStream(path.resolve(__dirname, './index.txt'), {
+  highWaterMark: 11,
+})
+let data = ''
+res.on('data', function (chunk) {
+  console.log(chunk) // <Buffer e6 9d 8e e7 bb 85 e3 80 8a e6 82>
+  data += chunk
+})
+res.on('end', function () {
+  console.log(data)
+})
+```
+
+上面使用了 highWaterMark 限定了最大的字节为 11，然后汉字的是 3 位一个汉字，造成了第四个汉字截断的时候，会出现乱码
+
+解决方法：
+
+1. 设定编码方式：setEnCoding()
+
+```js
+res.setEncoding('utf8')
+```
+
