@@ -21,7 +21,7 @@ const buf1 = Buffer.alloc(10)
 const buf2 = Buffer.alllocUnsafe(10) // 不安全，但速度快
 ```
 
-##### 使用 buffer 读取文件
+##### 使用 buffer base64 读取文件
 
 ```js
 const fs = require('fs')
@@ -40,5 +40,21 @@ function base64_decode(base64Str, file) {
 let base64str = base64_encode(path.join(__dirname, './README.md'))
 console.log(base64str)
 
-base64_decode(base64str, path.resolve(__dirname, 'copy.md')) 
+base64_decode(base64str, path.resolve(__dirname, 'copy.md'))
+```
+
+##### 可读流
+
+```js
+const fs = require('fs')
+const path = require('path')
+
+const res = fs.createReadStream(path.resolve(__dirname, './README.md'))
+let data = ''
+res.on('data', function (chunk) {
+  data += chunk
+})
+res.on('end', function () {
+  console.log(data)
+})
 ```
