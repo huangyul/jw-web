@@ -88,3 +88,25 @@ res.on('end', function () {
 res.setEncoding('utf8')
 ```
 
+### Stream 流
+
+#### 类型
+
+- 可读流
+- 可写流
+- duplex：可读可写
+- transform：可以是可读可写
+
+#### 在管道中间对流进行处理
+
+```js
+const fs = require('fs')
+const zlib = require('zlib')
+const path = require('path')
+
+fs.createReadStream(path.resolve(__dirname), './index.txt')
+  .pipe(zlib.createGzip()) // 使用管道可以对流进行处理
+  .pipe(fs.createWriteStream('index.txt.gz'))
+```
+
+##### 实现原理
