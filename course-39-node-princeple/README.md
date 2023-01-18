@@ -109,4 +109,7 @@ fs.createReadStream(path.resolve(__dirname), './index.txt')
   .pipe(fs.createWriteStream('index.txt.gz'))
 ```
 
-##### 实现原理
+#### 优势
+
+- 使用流就是使用堆外空间
+- 不会被垃圾回收
