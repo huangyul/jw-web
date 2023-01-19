@@ -74,3 +74,109 @@
     防止过多数据涌入造成路由器或链路过载
     发送方要维持一个拥塞窗口，就是一个状态变量
     ssthresh 慢开始门限
+
+### IP
+
+#### IP 地址
+
+IP 地址（IPv4 地址）由 32 位正整数来表示，在计算机内部以⼆进制⽅式被处理。⽇常⽣活中，我们将 32 位的 IP 地址以每 8 位为⼀组，分成 4 组，每组以 “.” 隔开，再将每组数转换成⼗进
+制数
+IP 地址包含⽹络标识和主机标识, ⽐如 172.112.110.11
+172.112.110 就是⽹络标识, 同⼀⽹段内⽹络标识必须相同
+11 就是主机标识, 同⼀⽹段内主机标识不能重复
+
+#### DNS
+
+domain name system
+
+客户端发送查询报⽂”query zh.wikipedia.org”⾄ DNS 服务器，DNS 服务器⾸先检查⾃身缓
+存，如果存在记录则直接返回结果。
+如果记录⽼化或不存在，则：
+DNS 服务器向根域名服务器发送查询报⽂”query zh.wikipedia.org”，根域名服务器返回顶级
+域 .org 的顶级域名服务器地址。
+DNS 服务器向 .org 域的顶级域名服务器发送查询报⽂”query zh.wikipedia.org”，得到⼆级
+域 .wikipedia.org 的权威域名服务器地址。
+DNS 服务器向 .wikipedia.org 域的权威域名服务器发送查询报⽂”query zh.wikipedia.org”，
+得到主机 zh 的 A 记录，存⼊⾃身缓存并返回给客户端。
+
+### 通过 node 创建 TCP 服务
+
+Socket，套接字，是应用层和传输层之间的抽象层，把 TCP/IP 复杂的操作抽象位几个简单的接口，供应用层调用，比如：create，listen，coonnect，read，write
+
+- http：应用层模块，主要按照特定协议编码解码数据
+- net：传输层模块，主要负责传输编码后的应用层数据
+- https：是个综合模块（涵盖了 http/tls/crypto），主要用于确保数据安全性
+
+1. 创建 TCP 服务端
+
+```js
+const net = require('net')
+
+const HOST = '127.0.0.1'
+const PORT = 7777
+
+// 创建一个TCP服务器实例，调用listen函数监听指定端口和IP
+// net.createServer()有一个参数，监听连接建立的回调
+net
+  .createServer((socket) => {
+    const remoteName = `${socket.remoteAddress}:${socket.remotePort}`
+    console.log(`${remoteName}连接到本服务器`)
+
+    // 接收信息
+    socket.on('data', (data) => {
+      console.log(`${remoteName} - ${data}`)
+      // 给客户端发送消息
+      socket.write(`你发送的消息是 ${data}`)
+    })
+
+    // 关闭
+    socket.on('close', (data) => {
+      console.log(`${remoteName}连接关闭`)
+    })
+  })
+  .listen(PORT, HOST)
+
+console.log(`Server listening on ${HOST}:${PORT}`)
+```
+
+2. 创建 TCP 客户端
+
+```js
+const net = require('net')
+
+// 要连接到哪里
+const HOST = '127.0.0.1'
+const PORT = 7777
+
+const client = new net.Socket()
+const SERVER_NAME = `${HOST}:${PORT}`
+
+let count = 0
+client.connect(PORT, HOST, () => {
+  console.log(`成功连接到${SERVER_NAME}`)
+
+  // 向服务器发送数据
+  const timer = setInterval(() => {
+    if (count > 10) {
+      client.write('我没事了，告辞')
+      clearInterval(timer)
+      return
+    }
+    client.write('客户端发送消息' + count++)
+  }, 1000)
+})
+
+// 接收信息
+client.on('data', (data) => {
+  console.log(`${SERVER_NAME} - ${data}`)
+})
+
+// 关闭事件
+client.on('close', () => {
+  console.log('客户端关闭')
+})
+
+client.on('error', (error) => {
+  console.log(error)
+})
+```
