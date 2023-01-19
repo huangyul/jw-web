@@ -113,3 +113,21 @@ fs.createReadStream(path.resolve(__dirname), './index.txt')
 
 - 使用流就是使用堆外空间
 - 不会被垃圾回收
+
+### Events
+
+```js
+emitter.on(eventName, listener)
+emitter.once(eventName, listener)
+emitter.off(eventName, listenenr)
+emitter.emit(eventName, listener)
+
+emitter.addListener(eventName, listener)
+emitter.removeListener(eventName, listener)
+```
+
+#### 实现事件触发器
+
+```js
+
+```

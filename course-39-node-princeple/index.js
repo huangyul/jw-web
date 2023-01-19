@@ -1,7 +1,23 @@
-const fs = require('fs')
-const zlib = require('zlib')
-const path = require('path')
+class MyEventEmitter {
+  constructor() {
+    this.events = {}
+  }
 
-fs.createReadStream(path.resolve(__dirname), './index.txt')
-  .pipe(zlib.createGzip()) // 使用管道可以对流进行处理
-  .pipe(fs.createWriteStream('index.txt.gz'))
+  // 绑定事件
+  on(event, cbFn) {
+    if (!this.events[event]) {
+      this.events[event] = []
+    }
+    this.events[event].push(cbFn)
+    return this
+  }
+
+  // 解绑事件
+  off(event, cbFn) {
+    if (this._events[type]) {
+      this._events[type] = this._events[type].filter((fn) => {
+        return fn != cbFn
+      })
+    }
+  }
+}
