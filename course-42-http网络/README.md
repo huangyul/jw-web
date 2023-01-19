@@ -180,3 +180,10 @@ client.on('error', (error) => {
   console.log(error)
 })
 ```
+
+## HTTP
+
+### HTTP 是建立在 TCP 之上
+
+### 一次完成的 HTTP 通信的过程
+
