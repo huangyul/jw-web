@@ -18,3 +18,10 @@
 - 当小程序后台运行或跳转到其他页面，触发onHide方法
 - 重新进入页面，触发onShow方法
 - 使用重定向wx.redirectTo()或关闭当前页返回上一页wx.navigateBack()，触发onUnload
+
+## 小程序基础API
+
+### 
+
+## 小程序架构-双线程模型
+
