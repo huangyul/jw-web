@@ -11,5 +11,20 @@
   <body>
     <div id="app"></div>
     <div id="app2"></div>
+
+    <script>
+      rj.config({
+        paths: {
+          lodash:
+            'https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.min.js',
+        },
+      })
+
+      require(['lodash', 'a'], function (_, a) {
+        console.log('require run')
+        document.querySelector('#app').innerHTML = _.random(5)
+        document.querySelector('#app2').innerHTML = a.str()
+      })
+    </script>
   </body>
 </html>
