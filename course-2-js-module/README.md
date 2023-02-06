@@ -244,3 +244,65 @@ define = (name, deps, factory) => {
   def.set(name, { name, deps, factory })
 }
 ```
+
+###### 实现 require
+
+require 函数做了几件事
+
+1. 加载 cdn 地址的文件内容或通过 script 加载本地文件
+2. 通过 script 加载本地文件的时候，要注意可能也会引用了其他文件，需要递归加载
+3. 加载完成后，将获取到的函数，传入 factory 函数即可
+
+```js
+/* 加载函数的方法 */
+// 使用cdn的方式加载
+const __import = (url) => {
+  return new Promise((resolve, reject) => {
+    System.import(url).then(resolve, reject)
+  })
+}
+// 使用script标签
+const __load = (url) => {
+  return new Promise((resolve, reject) => {
+    const head = document.getElementsByTagName('head')[0]
+    const node = document.createElement('script')
+    node.type = 'text/javascript'
+    node.src = url
+    node.async = true
+    node.onload = resolve
+    node.onerror = reject
+    head.appendChild(node)
+  })
+}
+
+// 获取url
+const __getUrl = (dep) => {
+  const p = location.pathname
+  return p.slice(0, p.lastIndexOf('/')) + '/' + dep + '.js'
+}
+
+// require
+// 使用模块，这里才是加载模块的地方
+require = (deps, factory) => {
+  // 异步加载，需要使用promise
+  return new Promise((resolve, reject) => {
+    Promise.all(
+      deps.map((dep) => {
+        // 加载模块
+        if (defaultOptions.paths[dep])
+          return __import(defaultOptions.paths[dep])
+
+        return __load(__getUrl(dep)).then(() => {
+          const { deps, factory } = def.get(dep)
+          // 判断如果依赖里面有其他依赖，就要递归去找
+          if (deps.length === 0) return factory(null)
+          return require(deps, factory)
+        })
+      })
+    ).then(resolve, reject)
+  }).then((instances) => {
+    // 拿到异步加载的内容，传给factory函数
+    return factory(...instances)
+  })
+}
+```
