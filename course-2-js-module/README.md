@@ -109,7 +109,7 @@ define('xxxModule', ['module1', 'module2'], function(module1, module2) {
 
 ##### ESM (ES Module)
 
-ES6提出的一套模块标准，使用 `import` 声明依赖，使用 `export` 声明接口
+ES6 提出的一套模块标准，使用 `import` 声明依赖，使用 `export` 声明接口
 
 ```js
 // a.js
@@ -221,3 +221,26 @@ require(['a', 'b'], function (a, b) {
 
 1. 在**config**时已经开始加载或下载依赖
 2. 是基于 promise 实现的
+
+### 手写 mini 版
+
+###### 实现 config
+
+config 方法就是拿到调用时候的配置，并存好
+
+```js
+rj = {}
+const defaultOptions = { paths: '' }
+rj.config = (options) => Object.assign(defaultOptions, options)
+```
+
+###### 实现 define
+
+定义模块，触发的机制在 require 的时候，所以此时的作用仅仅是收集
+
+```js
+const def = new Map()
+define = (name, deps, factory) => {
+  def.set(name, { name, deps, factory })
+}
+```
