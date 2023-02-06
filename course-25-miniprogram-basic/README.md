@@ -21,7 +21,13 @@
 
 ## 小程序基础API
 
-### 
+[参考官方文档](https://developers.weixin.qq.com/miniprogram/dev/api/)
 
 ## 小程序架构-双线程模型
 
+小程序的渲染层和逻辑层分别由2个线程管理：
+
+- 渲染层：就是处理wxml和wxss
+- 逻辑层：处理js和api
+
+它们之间通过ViewModel进行通信：逻辑层把数据变化通知到视图层，触发视图层更新；视图层把触发事件
