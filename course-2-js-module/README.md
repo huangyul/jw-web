@@ -306,3 +306,44 @@ require = (deps, factory) => {
   })
 }
 ```
+
+## CMD
+
+#### 使用实例
+
+```js
+define('a', function (require, exoprts, module) {
+  console.log('a load')
+  exports.run = function () {
+    console.log('a run')
+  }
+})
+
+define('b', function (require, exports, module) {
+  console.log('b load')
+  exports.run = function () {
+    console.log('b run')
+  }
+})
+
+define('main', function (require, exports, module) {
+  console.log('main log')
+  var a = require('a')
+  a.run()
+  var b = require('b')
+  b.run()
+})
+
+seajs.use('main')
+
+// main run
+// a load
+// a run
+// b load
+// b run
+```
+
+### 理解 AMD 的依赖前置和 CMD 的依赖后置
+
+- 在 AMD 规范中，执行 define 函数，会先执行里面每一个依赖，甚至递归执行，直到把所有的 return 值拿到，也就是在 factory 函数执行前，我们已经执行过一遍所有的依赖了
+- 在 CMD 规范中，执行 define 函数时，并不会马上执行所有的依赖，而是等到 require 时，再执行依赖获取导出的值，跟按需加载差不多
