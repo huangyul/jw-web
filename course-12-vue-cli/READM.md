@@ -125,6 +125,47 @@ const command = `git clone https://github.com/huangyul/${answers.framework}-xxx.
 childProcess.execSync(command)
 ```
 
+### 完整代码
+
+```js
+#!/usr/bin/env node
+
+const { program } = require('commander')
+const inquirer = require('inquirer')
+const path = require('path')
+const childProcess = require('child_process')
+
+// 让用户填写一些表单
+program
+  .arguments('<dir>') // 用户需要输入什么
+  .description('this is a directory') // 描述
+  .action((dir) => {
+    // 拿到后执行什么
+    return inquirer
+      .prompt([
+        {
+          type: 'list',
+          name: 'framework',
+          message: 'which framework do you like',
+          choices: ['react', 'vue'],
+        },
+      ])
+      .then((answers) => {
+        console.log('result', dir, answers)
+        // 1.获取绝对路径
+        const fullDir = path.resolve(process.cwd(), dir)
+        console.log('---fullDir', fullDir)
+        // 2.构建命令 这里要选中https协议
+        const command = `git clone https://github.com/huangyul/${answers.framework}-test.git} ${fullDir}`
+        // 3. 执行命令
+        childProcess.execSync(command)
+      })
+  })
+
+// 格式化参数
+program.parse(process.argv)
+```
+
 ### 发布
 
 npm publish
