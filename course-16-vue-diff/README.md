@@ -63,3 +63,21 @@ for(let i = 0; i < oldArr.length; i++) {
 **在 react 中**
 
 使用下标作为 `key`，进行数组的删除操作时，会造成所有 `dom` 重新渲染
+
+## 虚拟 DOM
+
+### 什么是虚拟 DOM
+
+本质是一个嵌套对象，描述节点的结构
+
+### 如何创建虚拟 DOM
+
+`h()`和`createElement()`
+
+```js
+function h(type, props) {
+  return { type, props }
+}
+```
+
+### 使用虚拟 DOM
