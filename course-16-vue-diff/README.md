@@ -81,3 +81,22 @@ function h(type, props) {
 ```
 
 ### 使用虚拟 DOM
+
+通过一些工具，将代码中的某些东西提取出来，然后调用 createElement 方法
+
+### 渲染(mount)
+
+就是虚拟 DOM 到真实 DOM 的过程
+
+```js
+function(node) {
+  document.createElement()
+  parent.insert()
+}
+```
+
+### diff 相关(patch)
+
+```js
+f(oldVnode, newVnode, parent)
+```
