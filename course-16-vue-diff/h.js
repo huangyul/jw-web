@@ -27,7 +27,7 @@ const createText = (text) => {
   }
 }
 
-//
+// 生成虚拟DOM对象的方法
 export const h = (type, props, ...kids) => {
   props = props || {}
   let key = props.key || void 0
