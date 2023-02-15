@@ -30,7 +30,7 @@ const createText = (text) => {
 // 生成虚拟DOM对象的方法
 export const h = (type, props, ...kids) => {
   props = props || {}
-  let key = props.key || void 0
+  let key = props.key || void 0 // void 0 是undefined
   // 处理children，因为可能放到props里，也可能直接传进来
   kids = normalize(props.children || kids)
   // props.children

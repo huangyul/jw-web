@@ -103,6 +103,10 @@ f(oldVnode, newVnode, parent)
 
 ## 手写
 
+1. 定义虚拟 DOM 的结构
+2. 创建虚拟 DOM 的方法`h()`
+3. 渲染函数`render()`
+
 ### 定义虚拟 DOM 的方法
 
 ```js
