@@ -1,39 +1,45 @@
+
+const normalize = (children = []) => children.map(child => typeof child === 'string' ? createText(child) : child)
+
 const createVnode = (type, props, key, $$) => {
-  // 定义虚拟DOM的数据结构
+
+  // step1. 定义虚拟 DOM 的数据结构
   return {
-    type,
+    type, // div / CompoentA / ''(文本)
     props,
     key,
-    $$,
+    $$
   }
 }
 
-const normalize = (child) =>
-  child.map((node) => (typeof node === 'string' ? createText(node) : node))
-
 export const NODE_FLAG = {
-  EL: 1, // 元素 Element
-  TEXT: 1 << 1,
+  EL: 1, // 元素 element
+  TEXT: 1 << 1
 }
 
-// 文本节点
-const createText = (text) => {
+const  createText = (text) => {
   return {
     type: '',
     props: {
-      nodeValue: text + '',
+      nodeValue: text + ''
     },
-    $$: { flag: NODE_FLAG.TEXT }, // 定义节点的类型就是文本节点
+    $$: { flag: NODE_FLAG.TEXT }
   }
 }
 
-//
+/**
+ * step2. 定义生成虚拟DOM对象的方法
+ * h('div', { className: 'padding20'}, 'hello world!')
+ */
 export const h = (type, props, ...kids) => {
   props = props || {}
   let key = props.key || void 0
-  // 处理children，因为可能放到props里，也可能直接传进来
   kids = normalize(props.children || kids)
+
   // props.children
+  // void 0
+  // { type: 'div', ... }
+  // [{xx}, {xxx}]
   if (kids.length) props.children = kids.length === 1 ? kids[0] : kids
 
   const $$ = {}
