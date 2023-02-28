@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <a href="#red">红色</a>
+    <a href="#yellow">黄色</a>
+    <a href="#green">绿色</a>
+    <script>
+      class Router {
+        constructor() {
+          this.routes = {}
+        }
+        route(path, cb) {
+          this.routes[path] =
+            typeof cb == 'function'
+              ? cb
+              : () => {
+                  console.log('empty')
+                }
+        }
+      }
+
+      window.addEventListener('hashChange', (path) => {
+        console.log(path)
+      })
+
+      const router = new Router()
+      router.route('#red', () => {
+        console.log('red')
+      })
+      router.route('#yello', () => {})
+    </script>
+  </body>
+</html>

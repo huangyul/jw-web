@@ -58,7 +58,7 @@ window.history.replaceState() // location.replace 替换当前的历史记录
 window.history.pushState(null, null, path)
 
 1. state，是一个对象，是一个与指定网址相关的对象，一般不会用
-2. title，新页面的标题。
+2. title，新页面的标题，一般传空。
 3. url 页面的新地址
 
 #### 面试题
