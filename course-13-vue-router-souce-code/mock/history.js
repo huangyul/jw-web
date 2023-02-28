@@ -11,23 +11,24 @@ class BaseRouter {
 
   initPath(path) {
     // 初始化的时候也要执行一下方法，但是不应该使用pushstate，因为不应该再推入一个
-    window.history.replaceState(null, null, path)
+    window.history.replaceState({ path }, null, path)
 
     const cb = this.routes[path]
     if (cb) cb()
   }
 
   go(path) {
-    window.history.pushState(null, null, path)
+    // 这里第一个参数要传path，因为后面popstate监听时需要这个参数
+    window.history.pushState({ path }, null, path)
     const cb = this.routes[path]
     if (cb) {
       cb()
     }
   }
 
-  // 首次加载时
-  bindPopState() {
-    window.addEventListener('popState', (e) => {
+  // 首次加载时绑定popstate，因为pushstate并不会触发popstate，而实际中路由的前进后退都需要监听
+  bindPopstate() {
+    window.addEventListener('popstate', (e) => {
       const path = e.state && e.state.path
       this.routes[path] && this.routes[path]()
     })
